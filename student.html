@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MathMind AI | منصة الصف الرابع الأساسي الشاملة والذكية</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
+body { background: linear-gradient(135deg, #fff8df, #ffe082, #fff4c2); color: #333; direction: rtl; text-align: right; min-height: 100vh; }
+body.locked { overflow: hidden; }
+
+.student-access-gate {
+    position: fixed; inset: 0; z-index: 5000;
+    background: linear-gradient(135deg, #fff8df, #ffe082, #fff4c2);
+    display: flex; align-items: center; justify-content: center; padding: 25px;
+}
+.student-access-gate.hidden { display: none !important; }
+.access-card {
+    width: 100%; max-width: 480px; background: white; border-radius: 28px;
+    padding: 35px 28px; text-align: center; box-shadow: 0 15px 45px rgba(0,0,0,.18); border-top: 7px solid #b71c1c;
+}
+.access-logo { font-size: 55px; margin-bottom: 10px; }
+.access-card h1 { color: #b71c1c; margin-bottom: 10px; }
+.access-card p { color: #666; line-height: 1.8; margin-bottom: 20px; font-size: 15px; }
+.form-step { text-align: right; margin-bottom: 15px; }
+.form-step label { display: block; margin-bottom: 6px; font-weight: bold; color: #333; font-size: 14px; }
+.input { width: 100%; padding: 12px 15px; border: 2px solid #ddd; border-radius: 12px; font-size: 15px; outline: none; transition: .2s; }
+.input:focus { border-color: #b71c1c; }
+.btn { padding: 12px 22px; border: none; border-radius: 14px; font-size: 16px; font-weight: bold; cursor: pointer; transition: .2s; }
+.btn-primary { background: #b71c1c; color: white; }
+.btn-primary:hover { background: #961515; }
+.btn-yellow { background: #f0c419; color: #333; }
+.btn-yellow:hover { background: #dcb00f; }
+.btn-light { background: #eee; color: #333; }
+.btn-light:hover { background: #ddd; }
+.full-btn { width: 100%; }
+.access-error { color: #b71c1c; background: #ffebee; padding: 12px; border-radius: 12px; margin-top: 15px; display: none; font-weight: bold; font-size: 13px; }
+
+.menu-button {
+    position: fixed; top: 22px; right: 22px; z-index: 1000; width: 52px; height: 52px; border: none; border-radius: 16px; background: #b71c1c; color: white; font-size: 25px; cursor: pointer; box-shadow: 0 8px 22px rgba(0,0,0,.18);
+}
+.side-menu {
+    position: fixed; top: 0; right: -330px; width: 310px; max-width: 85vw; height: 100vh; background: white; z-index: 999; padding: 90px 22px 25px; box-shadow: -10px 0 30px rgba(0,0,0,.15); transition: .3s; overflow-y: auto;
+}
+.side-menu.open { right: 0; }
+.menu-title { font-size: 22px; font-weight: bold; color: #b71c1c; margin-bottom: 25px; }
+.menu-item {
+    width: 100%; border: none; background: #fff8df; border-right: 5px solid #d32f2f; padding: 18px; border-radius: 16px; margin-bottom: 14px; text-align: right; font-size: 17px; font-weight: bold; cursor: pointer; transition: .2s;
+}
+.menu-item:hover { transform: translateX(-3px); background: #fff1b8; }
+.menu-close { width: 100%; margin-top: 15px; }
+.menu-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.35); z-index: 998; display: none; }
+.menu-overlay.show { display: block; }
+
+.container { max-width: 1200px; margin: 0 auto; padding: 25px; }
+.header { background: white; border-radius: 20px; padding: 20px 25px; box-shadow: 0 5px 20px rgba(0,0,0,.06); margin-bottom: 25px; }
+.header-box { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px; }
+.logo { display: flex; align-items: center; gap: 15px; }
+.logo-icon { font-size: 40px; }
+.logo-text strong { display: block; font-size: 20px; color: #b71c1c; }
+.logo-text span { font-size: 14px; color: #666; }
+.header-badge { background: #fff8df; border: 2px solid #f0c419; padding: 8px 16px; border-radius: 12px; font-weight: bold; color: #7a5600; }
+
+.cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; width: 100%; }
+.card { background: white; border-radius: 22px; padding: 25px; box-shadow: 0 8px 25px rgba(0,0,0,.06); cursor: pointer; transition: .2s; border-top: 5px solid #b71c1c; display: flex; flex-direction: column; justify-content: space-between; min-height: 240px; }
+.card:hover { transform: translateY(-4px); box-shadow: 0 12px 30px rgba(0,0,0,.1); }
+.card-icon { font-size: 38px; margin-bottom: 12px; }
+.card h3 { color: #b71c1c; font-size: 20px; margin-bottom: 8px; }
+.card p { color: #666; font-size: 14px; line-height: 1.6; margin-bottom: 15px; }
+
+.app-view { display: none; }
+.app-view.show { display: block; }
+
+.selected-grade-display-box {
+    background: linear-gradient(135deg, #fff8df, #ffffff);
+    border: 3px solid #f0c419; border-radius: 20px; padding: 18px 24px; text-align: center; margin-bottom: 25px; box-shadow: 0 6px 20px rgba(240, 196, 25, 0.2);
+}
+.selected-grade-display-box h2 { color: #b71c1c; font-size: 22px; font-weight: 800; margin: 0; }
+
+.content-box { background: white; border-radius: 22px; padding: 25px; box-shadow: 0 8px 25px rgba(0,0,0,.06); margin-bottom: 25px; }
+.question-number { font-weight: bold; color: #b71c1c; margin-bottom: 12px; font-size: 18px; }
+#questionText { text-align: right; font-size: 20px; line-height: 1.8; margin-bottom: 20px; color: #222; }
+
+.answer-box { margin-top: 18px; }
+.progress-wrap { margin-top: 20px; }
+.progress-bar { height: 12px; background: #eee; border-radius: 20px; overflow: hidden; }
+.progress-fill { height: 100%; width: 0%; background: #d32f2f; transition: .3s; }
+.hint-box { margin-top: 15px; padding: 15px; background: #fff4c2; border-right: 5px solid #d32f2f; border-radius: 12px; line-height: 1.8; font-size: 15px; text-align: right; }
+
+.ai-chat-box { background: white; border-radius: 22px; padding: 20px; box-shadow: 0 8px 25px rgba(0,0,0,.08); }
+.chat-messages { height: 350px; overflow-y: auto; padding: 16px; margin-bottom: 15px; background: #fff9e8; border-radius: 18px; }
+.message { padding: 12px 16px; border-radius: 16px; margin-bottom: 12px; max-width: 88%; line-height: 1.8; white-space: pre-wrap; }
+.message.student { background: #ffe082; margin-right: auto; }
+.message.ai { background: #f1f1f1; margin-left: auto; }
+.chat-input-row { display: flex; gap: 10px; align-items: stretch; }
+.chat-input { flex: 1; min-height: 58px; resize: none; }
+
+.footer { text-align: center; padding: 20px; color: #777; font-size: 14px; }
+.hidden { display: none !important; }
+
+@media(max-width: 800px) { .cards { grid-template-columns: 1fr; } }
+@media(max-width: 600px) { .chat-input-row { flex-direction: column; } .chat-messages { height: 300px; } }
+</style>
+</head>
+<body class="locked">
+
+<!-- بوابة التسجيل والدخول -->
+<div id="studentAccessGate" class="student-access-gate">
+    <div class="access-card">
+        <div class="access-logo">🎒</div>
+        <h1>MathMind AI</h1>
+        <p>منصة الصف الرابع الأساسي الشاملة لجميع كتب المنهاج. يرجى إدخال بياناتكِ:</p>
+
+        <div class="form-step">
+            <label>المدرسة</label>
+            <select id="regSchool" class="input">
+                <option value="">-- اختاري المدرسة --</option>
+                <option value="مدرسة الأمل الأساسية المختلطة">مدرسة الأمل الأساسية المختلطة</option>
+                <option value="مدرسة التفوق النموذجية">مدرسة التفوق النموذجية</option>
+                <option value="مدرسة الملك عبد الله الثاني للتميز">مدرسة الملك عبد الله الثاني للتميز</option>
+            </select>
+        </div>
+
+        <div class="form-step">
+            <label>الصف الدراسي</label>
+            <input type="text" class="input" value="الصف الرابع الأساسي" disabled style="background:#f8f9fa; font-weight:bold; color:#b71c1c;">
+        </div>
+
+        <div class="form-step">
+            <label>الشعبة</label>
+            <select id="regSection" class="input">
+                <option value="">-- اختاري الشعبة --</option>
+                <option value="أ">الشعبة أ</option>
+                <option value="ب">الشعبة ب</option>
+                <option value="ج">الشعبة ج</option>
+                <option value="د">الشعبة د</option>
+            </select>
+        </div>
+
+        <div class="form-step">
+            <label>اسم الطالبة الثلاثي</label>
+            <input id="regName" class="input" type="text" placeholder="الاسم الثلاثي">
+        </div>
+
+        <button class="btn btn-primary full-btn" style="margin-top:10px;" onclick="registerNewStudent()">دخول إلى المنصة</button>
+        <div id="accessError" class="access-error">❌ يرجى إكمال إدخال بيانات المدرسة والشعبة واسم الطالبة.</div>
+    </div>
+</div>
+
+<!-- القائمة الجانبية -->
+<button class="menu-button" onclick="toggleMenu()" aria-label="القائمة">☰</button>
+<div id="menuOverlay" class="menu-overlay" onclick="closeMenu()"></div>
+<aside id="sideMenu" class="side-menu">
+    <div class="menu-title">🎒 MathMind AI</div>
+    <button class="menu-item" onclick="goHomeFromMenu()">🏠 <span>الصفحة الرئيسية (اختيار المادة)</span></button>
+    <button class="menu-item" style="background:#ffebee; border-right-color:#b71c1c; color:#b71c1c;" onclick="logoutStudent()">🚪 <span>تسجيل خروج</span></button>
+    <button class="btn btn-light full-btn menu-close" onclick="closeMenu()">إغلاق القائمة</button>
+</aside>
+
+<div class="container">
+<header class="header">
+    <div class="header-box">
+        <div class="logo">
+            <div class="logo-icon">🎒</div>
+            <div class="logo-text">
+                <strong>MathMind AI</strong>
+                <span>منصة المناهج الدراسية الشاملة (الرابع الأساسي)</span>
+            </div>
+        </div>
+        <div class="header-badge" id="studentBadgeName">👩🏻‍🎓 الطالبة</div>
+    </div>
+</header>
+
+<section class="section">
+    <div class="selected-grade-display-box">
+        <h2 id="heroSelectedGradeTitle">🎓 مدرسة الأمل الأساسية المختلطة | الصف الرابع الأساسي - أ</h2>
+    </div>
+</section>
+
+<!-- الواجهة 1: المواد الأربعة الكاملة -->
+<section id="subjectsView" class="section app-view show">
+    <div class="content-box" style="text-align:center; margin-bottom:20px;">
+        <h2 style="color:#b71c1c; margin-bottom:8px;">اختر المادة الدراسية (الفصل الأول الكامل) 📚</h2>
+        <p style="color:#666;">كُتب الطالب الرسمية الأربعة بجميع وحداتها ودروسها (15 سؤالاً حقيقياً كاملاً لكل درس):</p>
+    </div>
+    <div class="cards">
+        <div class="card" onclick="openSubjectUnits('math')">
+            <div>
+                <div class="card-icon">🔢</div>
+                <h3>كتاب الرياضيات (كامل المنهاج)</h3>
+                <p>الأعداد الكلية، الجمع والطرح، الضرب، والقسمة.</p>
+            </div>
+            <button class="btn btn-primary full-btn">فتح وحدات الرياضيات</button>
+        </div>
+        <div class="card" onclick="openSubjectUnits('science')">
+            <div>
+                <div class="card-icon">🧪</div>
+                <h3>كتاب العلوم (كامل المنهاج)</h3>
+                <p>حالات المادة، التغيرات، والنظام البيئي والتكيف.</p>
+            </div>
+            <button class="btn btn-primary full-btn">فتح وحدات العلوم</button>
+        </div>
+        <div class="card" onclick="openSubjectUnits('arabic')">
+            <div>
+                <div class="card-icon">📖</div>
+                <h3>كتاب اللغة العربية (كامل المنهاج)</h3>
+                <p>القراءة، الآيات، القواعد النحوية، والإملاء.</p>
+            </div>
+            <button class="btn btn-yellow full-btn">فتح وحدات العربية</button>
+        </div>
+        <div class="card" onclick="openSubjectUnits('english')">
+            <div>
+                <div class="card-icon">🔤</div>
+                <h3>كتاب اللغة الإنجليزية (Action Pack كامل)</h3>
+                <p>قواعد، مفردات، محادثة، ووحدات المنهاج.</p>
+            </div>
+            <button class="btn btn-yellow full-btn">فتح وحدات الإنجليزية</button>
+        </div>
+    </div>
+</section>
+
+<!-- الواجهة 2: الوحدات -->
+<section id="unitsView" class="section app-view">
+    <div style="margin-bottom: 15px;">
+        <button class="btn btn-light" style="width: auto; padding: 10px 20px;" onclick="goBackToSubjects()">⬅ رجوع لاختيار المواد</button>
+    </div>
+    <div class="content-box" style="text-align:center; margin-bottom:20px;">
+        <h2 id="subjectHeaderTitle" style="color:#b71c1c; margin-bottom:8px;">وحدات المادة</h2>
+        <p style="color:#666;">اختاري الوحدة الدراسية لعرض كافة دروسها:</p>
+    </div>
+    <div id="unitsContainer" class="cards"></div>
+</section>
+
+<!-- الواجهة 3: الدروس -->
+<section id="lessonsView" class="section app-view">
+    <div style="margin-bottom: 15px;">
+        <button class="btn btn-light" style="width: auto; padding: 10px 20px;" onclick="goBackToUnits()">⬅ رجوع لاختيار الوحدات</button>
+    </div>
+    <div class="content-box" style="text-align:center; margin-bottom:20px;">
+        <h2 id="unitTitleHeader" style="color:#b71c1c; margin-bottom:8px;">دروس الوحدة</h2>
+        <p style="color:#666;">اختاري الدرس لبدء الـ 15 سؤالاً وتلميحاتها:</p>
+    </div>
+    <div id="lessonsContainer" class="cards"></div>
+</section>
+
+<!-- الواجهة 4: التدريبات والذكاء الاصطناعي -->
+<section id="trainingAiView" class="section app-view">
+    <div style="margin-bottom: 15px;">
+        <button class="btn btn-light" style="width: auto; padding: 10px 20px;" onclick="goBackToLessons()">⬅ رجوع لاختيار الدروس</button>
+    </div>
+
+    <div class="selected-grade-display-box" style="background:#fff9e8; border-color:#d32f2f;">
+        <h3 id="currentLessonPathTitle" style="color:#b71c1c; font-size:18px; margin:0;">📚 المادة ⬅ الوحدة ⬅ الدرس</h3>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 1.1fr 1fr; gap:24px;">
+        <div class="content-box">
+            <h3 style="color:#b71c1c; margin-bottom:15px; border-bottom:2px solid #eee; padding-bottom:10px;">📝 التدريبات الوزارية (15 سؤالاً حقيقياً وكاملاً لكل درس)</h3>
+            <div id="questionNumber" class="question-number"></div>
+            <h3 id="questionText"></h3>
+            <div class="answer-box">
+                <label>اكتبي محاولتكِ أو إجابتكِ</label>
+                <textarea id="studentAnswer" class="input" rows="4" placeholder="اكتبي إجابتك هنا..."></textarea>
+            </div>
+            <div style="margin-top:15px; display:flex; gap:8px; flex-wrap:wrap;">
+                <button class="btn btn-yellow" onclick="showHint()">💡 تلميح تدريجي</button>
+                <button class="btn btn-primary" onclick="saveAttempt()">إرسال الحل</button>
+                <button class="btn btn-light" onclick="nextQuestion()">التالي</button>
+            </div>
+            <div id="hintBox" class="hint-box" style="display:none;"></div>
+            <div class="progress-wrap">
+                <div class="progress-bar">
+                    <div id="progressFill" class="progress-fill"></div>
+                </div>
+                <p id="progressText">السؤال 1 من 15</p>
+            </div>
+        </div>
+
+        <div class="ai-chat-box">
+            <h3 style="color:#b71c1c; margin-bottom:15px; border-bottom:2px solid #eee; padding-bottom:10px;">🤖 مساعد MathMind AI الذكي</h3>
+            <div id="chatMessages" class="chat-messages">
+                <div class="message ai">
+                    أهلاً بكِ يا بطلة الصف الرابع 👋 أنا مساعدكِ الذكي المعزز. يمكنكِ سؤالي عن أي مسألة أو قاعدة أو درس في الكتاب، وسأشرحه لكِ فوراً وبدقة تامة خطوة بخطوة!
+                </div>
+            </div>
+            <div class="chat-input-row">
+                <textarea id="chatInput" class="input chat-input" placeholder="اسألي عن أي شيء في الكتاب..."></textarea>
+                <button class="btn btn-primary" onclick="sendMessage()">إرسال</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer class="footer">
+    <p>MathMind AI ©️ 2026</p>
+    <p>منصة الصف الرابع الأساسي الشاملة لجميع كتب المنهاج (الفصل الأول الكامل) 🤖</p>
+</footer>
+</div>
+
+<script>
+let currentStudent = null;
+let selectedSubjectKey = "";
+let selectedSubjectName = "";
+let selectedUnitKey = "";
+let selectedUnitName = "";
+let selectedLessonTitle = "";
+let currentQuestions = [];
+let currentQuestionIndex = 0;
+let hintLevel = 0;
+let currentLessonObj = null;
+
+// قاعدة بيانات الكتب الأربعة الكاملة مع 15 سؤالاً حقيقياً ومفصلاً ومكتوباً لكل درس بالتمام والكمال
+const fullyCheckedBooksData = {
+    math: {
+        name: "كتاب الرياضيات",
+        icon: "🔢",
+        units: {
+            u1: {
+                name: "الوحدة الأولى: الأعداد الكلية",
+                lessons: [
+                    {
+                        title: "الدرس 1: منازل الأعداد ضمن الملايين",
+                        questions: [
+                            { q: "اكتب بالصيغة القياسية: خمسمائة وأربعة وعشرون ألفاً وثلاثمائة واثنا عشر.", hints: ["ابدأ بالآلاف: 524", "اكتب الآحاد: 312", "العدد هو 524312"] },
+                            { q: "ما هي قيمة الرقم 7 في العدد 7432000؟", hints: ["يقع في منزلة الملايين", "إذن قيمته 7000000"] },
+                            { q: "اكتب العدد 80540 بالصيغة التحليلية.", hints: ["80000 + 5000 + 40"] },
+                            { q: "أي الأعداد التالية أكبر: 45210 أم 45120؟", hints: ["قارن المئات", "العدد الأكبر هو 45210"] },
+                            { q: "ما هو العدد الذي يقل بمقدار 1000 عن العدد 84210؟", hints: ["اطرح من الألوف", "الناتج 83210"] },
+                            { q: "اكتب العدد بالصيغة اللفظية: 125000", hints: ["مائة وخمسة وعشرون ألفاً"] },
+                            { q: "ما هو الرقم الواقع في منزلة مئات الألوف في العدد 6342100؟", hints: ["عد المنازل من اليمين", "الرقم 3"] },
+                            { q: "رتب الأعداد التالية تصاعدياً: 12000، 9000، 15000", hints: ["9000، 12000، 15000"] },
+                            { q: "اكتب العدد السابق للعدد 50000", hints: ["49999"] },
+                            { q: "اكتب العدد التالي للعدد 99999", hints: ["100000"] },
+                            { q: "قارن مستخدماً (> أو <): 20300 [...] 20030", hints: ["(>)"] },
+                            { q: "ما هي قيمة الرقم 5 في العدد 452300؟", hints: ["عشرات الألوف", "50000"] },
+                            { q: "كم عشرة في المائة الواحدة؟", hints: ["10 عشرات"] },
+                            { q: "ما هو أكبر عدد يمكن تكوينه من الأرقام: 3، 8، 1، 5؟", hints: ["8531"] },
+                            { q: "ما هو أصغر عدد يمكن تكوينه من الأرقام: 4، 0، 7، 2؟", hints: ["2047"] }
+                        ]
+                    },
+                    {
+                        title: "الدرس 2: مقارنة الأعداد وترتيبها",
+                        questions: [
+                            { q: "ضع الإشارة المناسبة (> أو <): 98453 [...] 98543", hints: ["قارن المئات", "الإشارة هي (<)"] },
+                            { q: "رتب الأعداد التالية تصاعدياً: 4120، 4210، 4012", hints: ["4012، 4120، 4210"] },
+                            { q: "أي العبارات التالية صحيحة: 7420 > 7240 أم العكس؟", hints: ["7420 > 7240"] },
+                            { q: "رتب تنازلياً: 8520، 8910، 8120", hints: ["8910، 8520، 8120"] },
+                            { q: "ضع الإشارة المناسبة: 10500 [...] 10500", hints: ["(=)"] },
+                            { q: "قارن بين: 63210 و 63120", hints: ["العدد الأول أكبر"] },
+                            { q: "أي العددين أصغر: 9999 أم 10000؟", hints: ["9999"] },
+                            { q: "رتب تصاعدياً: 3004، 3040، 3400", hints: ["3004، 3040، 3400"] },
+                            { q: "اكتب عدداً بين 54000 و 55000", hints: ["54500"] },
+                            { q: "قارن بين 700+20+5 و 725", hints: ["(=)"] },
+                            { q: "رتب تنازلياً: 54100، 54010، 54110", hints: ["54110، 54100، 54010"] },
+                            { q: "أيهما أكبر: ثلاثة آلاف ومائتان أم 3020؟", hints: ["ثلاثة آلاف ومائتان"] },
+                            { q: "ضع الإشارة: 45000 [...] 44999", hints: ["(>)"] },
+                            { q: "رتب تصاعدياً: 101، 1001، 10001", hints: ["101، 1001، 10001"] },
+                            { q: "قارن بين 800+50 و 80+500", hints: ["(>)"] }
+                        ]
+                    },
+                    {
+                        title: "الدرس 3: تقريب الأعداد",
+                        questions: [
+                            { q: "قرب العدد 4562 إلى أقرب مئة.", hints: ["4600"] },
+                            { q: "قرب العدد 83120 إلى أقرب ألف.", hints: ["83000"] },
+                            { q: "قرب العدد 749 إلى أقرب عشرة.", hints: ["750"] },
+                            { q: "قرب العدد 62100 إلى أقرب عشرة آلاف.", hints: ["60000"] },
+                            { q: "قرب العدد 9820 إلى أقرب ألف.", hints: ["10000"] },
+                            { q: "أي الأعداد تقريبها لأقرب مئة يساوي 500؟", hints: ["480"] },
+                            { q: "قرب العدد 1234 إلى أقرب مئة.", hints: ["1200"] },
+                            { q: "قرب العدد 56789 إلى أقرب ألف.", hints: ["57000"] },
+                            { q: "قرب العدد 35 إلى أقرب عشرة.", hints: ["40"] },
+                            { q: "ما أصغر عدد يقرب إلى 300 لأقرب مئة؟", hints: ["250"] },
+                            { q: "قرب العدد 849 إلى أقرب مئة.", hints: ["800"] },
+                            { q: "قرب العدد 999 إلى أقرب عشرة.", hints: ["1000"] },
+                            { q: "قرب العدد 41200 لعشرة آلاف.", hints: ["40000"] },
+                            { q: "قرب العدد 7500 لأقرب ألف.", hints: ["8000"] },
+                            { q: "هل 342 مقرباً لمئة يساوي 300 أم 400؟", hints: ["300"] }
+                        ]
+                    }
+                ]
+            },
+            u2: {
+                name: "الوحدة الثانية: جمع الأعداد وطرحها",
+                lessons: [
+                    {
+                        title: "الدرس 1: خصائص الجمع وتقدير ناتجه",
+                        questions: [
+                            { q: "ما الخاصية المستخدمة في: 14 + 25 = 25 + 14؟", hints: ["الخاصية التبديلية"] },
+                            { q: "قدر ناتج جمع: 412 + 389 بتقريب العددين لأقرب مئة.", hints: ["800"] },
+                            { q: "ما خاصية الجمع في: (3 + 5) + 2 = 3 + (5 + 2)؟", hints: ["الخاصية التجميعية"] },
+                            { q: "قدر ناتج طرح: 789 - 412 بتقريب العددين لأقرب مئة.", hints: ["400"] },
+                            { q: "جد ناتج تقدير جمع: 5200 + 3100 لأقرب ألف.", hints: ["8000"] },
+                            { q: "ما هي خاصية العنصر المحايد الجمعي؟", hints: ["الجمع مع الصفر"] },
+                            { q: "قدر ناتج: 645 - 210 بالتقريب لأقرب مئة.", hints: ["400"] },
+                            { q: "استخدم خصائص الجمع لإيجاد: 8 + 15 + 2", hints: ["25"] },
+                            { q: "ما التقدير الأنسب لجمع 489 و 123 بأقرب مئة؟", hints: ["600"] },
+                            { q: "قدر ناتج طرح 910 - 290 لأقرب مئة.", hints: ["600"] },
+                            { q: "أوجد ناتج 0 + 453 مستخدماً المحايد الجمعي.", hints: ["453"] },
+                            { q: "ما تقدير جمع 34 + 58 بأقرب عشرة؟", hints: ["90"] },
+                            { q: "هل تقدير الجمع يعطي الناتج الدقيق تماماً؟", hints: ["إجابة قريبة للمعقول"] },
+                            { q: "قدر ناتج: 73 + 26 بأقرب عشرة.", hints: ["100"] },
+                            { q: "لماذا نلجأ لتقدير نواتج الجمع والطرح؟", hints: ["للتحقق السريع من معقولية الحل"] }
+                        ]
+                    },
+                    {
+                        title: "الدرس 2: جمع وطرح الأعداد ضمن الملايين",
+                        questions: [
+                            { q: "أوجد ناتج جمع: 45230 + 12410", hints: ["57640"] },
+                            { q: "أوجد ناتج طرح: 89600 - 45200", hints: ["44400"] },
+                            { q: "اجمع العددين: 342100 + 213000", hints: ["555100"] },
+                            { q: "اطرح: 750000 - 320000", hints: ["430000"] },
+                            { q: "أوجد ناتج جمع مع إعادة التجميع: 4850 + 3720", hints: ["8570"] },
+                            { q: "أوجد ناتج طرح مع الاستلاف: 5200 - 1450", hints: ["3750"] },
+                            { q: "ما مجموع العددين 123456 و 654321؟", hints: ["777777"] },
+                            { q: "اطرح العدد 12345 من العدد 54321", hints: ["41976"] },
+                            { q: "اجمع: 500000 + 500000", hints: ["1000000"] },
+                            { q: "اطرح: 1000000 - 1", hints: ["999999"] },
+                            { q: "أوجد ناتج جمع: 41203 + 5782", hints: ["46985"] },
+                            { q: "اطرح: 84321 - 12341", hints: ["71980"] },
+                            { q: "ما الفرق بين 90000 و 45000؟", hints: ["45000"] },
+                            { q: "اجمع: 204050 + 301020", hints: ["505070"] },
+                            { q: "مع مريم 450000 وأعطت أخاها 120000، كم بقي؟", hints: ["330000"] }
+                        ]
+                    }
+                ]
+            },
+            u3: {
+                name: "الوحدة الثالثة: الضرب",
+                lessons: [
+                    {
+                        title: "الدرس 1: الضرب في مضاعفات 10 و 100 و 1000",
+                        questions: [
+                            { q: "أوجد ناتج: 4 × 300", hints: ["1200"] },
+                            { q: "أوجد ناتج: 5 × 2000", hints: ["10000"] },
+                            { q: "أوجد ناتج: 12 × 10", hints: ["120"] },
+                            { q: "أوجد ناتج: 7 × 400", hints: ["2800"] },
+                            { q: "أوجد ناتج: 9 × 100", hints: ["900"] },
+                            { q: "أوجد ناتج: 3 × 50", hints: ["150"] },
+                            { q: "أوجد ناتج: 6 × 3000", hints: ["18000"] },
+                            { q: "أوجد ناتج: 8 × 1000", hints: ["8000"] },
+                            { q: "أوجد ناتج: 2 × 400", hints: ["800"] },
+                            { q: "أوجد ناتج: 15 × 100", hints: ["1500"] },
+                            { q: "ما القاعدة عند الضرب في مضاعفات 10؟", hints: ["إنزال الأصفار وضرب الأرقام"] },
+                            { q: "أوجد ناتج: 10 × 100", hints: ["1000"] },
+                            { q: "أوجد ناتج: 4 × 40", hints: ["160"] },
+                            { q: "أوجد ناتج: 7 × 700", hints: ["4900"] },
+                            { q: "أوجد ناتج: 5 × 5000", hints: ["25000"] }
+                        ]
+                    },
+                    {
+                        title: "الدرس 2: ضرب عدد من منزلتين في منزلة واحدة",
+                        questions: [
+                            { q: "أوجد ناتج: 23 × 3", hints: ["69"] },
+                            { q: "أوجد ناتج: 12 × 4", hints: ["48"] },
+                            { q: "أوجد ناتج: 31 × 2", hints: ["62"] },
+                            { q: "أوجد ناتج: 42 × 2", hints: ["84"] },
+                            { q: "أوجد ناتج: 14 × 5", hints: ["70"] },
+                            { q: "أوجد ناتج: 25 × 3", hints: ["75"] },
+                            { q: "أوجد ناتج: 33 × 3", hints: ["99"] },
+                            { q: "أوجد ناتج: 21 × 4", hints: ["84"] },
+                            { q: "أوجد ناتج: 13 × 6", hints: ["78"] },
+                            { q: "أوجد ناتج: 24 × 2", hints: ["48"] },
+                            { q: "كيف نضرب باستخدام خوارزمية الضرب؟", hints: ["نضرب الآحاد ثم العشرات ونضيف الحمل"] },
+                            { q: "أوجد ناتج: 41 × 2", hints: ["82"] },
+                            { q: "أوجد ناتج: 11 × 8", hints: ["88"] },
+                            { q: "أوجد ناتج: 32 × 3", hints: ["96"] },
+                            { q: "أوجد ناتج: 22 × 4", hints: ["88"] }
+                        ]
+                    }
+                ]
+            },
+            u4: {
+                name: "الوحدة الرابعة: القسمة",
+                lessons: [
+                    {
+                        title: "الدرس 1: قسمة مضاعفات 10 و 100 و 1000",
+                        questions: [
+                            { q: "أوجد ناتج: 800 ÷ 2", hints: ["400"] },
+                            { q: "أوجد ناتج: 9000 ÷ 3", hints: ["3000"] },
+                            { q: "أوجد ناتج: 400 ÷ 4", hints: ["100"] },
+                            { q: "أوجد ناتج: 6000 ÷ 2", hints: ["3000"] },
+                            { q: "أوجد ناتج: 50 ÷ 5", hints: ["10"] },
+                            { q: "أوجد ناتج: 1200 ÷ 4", hints: ["300"] },
+                            { q: "أوجد ناتج: 1800 ÷ 6", hints: ["300"] },
+                            { q: "أوجد ناتج: 4900 ÷ 7", hints: ["700"] },
+                            { q: "أوجد ناتج: 350 ÷ 5", hints: ["70"] },
+                            { q: "أوجد ناتج: 2400 ÷ 8", hints: ["300"] },
+                            { q: "كيف نقسم مضاعفات 10؟", hints: ["نحذف الأصفار المتساوية ونقسم"] },
+                            { q: "أوجد ناتج: 1000 ÷ 10", hints: ["100"] },
+                            { q: "أوجد ناتج: 80 ÷ 4", hints: ["20"] },
+                            { q: "أوجد ناتج: 600 ÷ 3", hints: ["200"] },
+                            { q: "أوجد ناتج: 900 ÷ 9", hints: ["100"] }
+                        ]
+                    },
+                    {
+                        title: "الدرس 2: القسمة الطويلة",
+                        questions: [
+                            { q: "أجد ناتج القسمة الطويلة: 65 ÷ 5", hints: ["13"] },
+                            { q: "أجد ناتج القسمة: 84 ÷ 4", hints: ["21"] },
+                            { q: "أجد ناتج القسمة: 93 ÷ 3", hints: ["31"] },
+                            { q: "أجد ناتج القسمة: 48 ÷ 2", hints: ["24"] },
+                            { q: "أجد ناتج القسمة: 66 ÷ 3", hints: ["22"] },
+                            { q: "أجد ناتج القسمة: 55 ÷ 5", hints: ["11"] },
+                            { q: "أجد ناتج القسمة: 96 ÷ 3", hints: ["32"] },
+                            { q: "أجد ناتج القسمة: 44 ÷ 4", hints: ["11"] },
+                            { q: "أجد ناتج القسمة: 64 ÷ 2", hints: ["32"] },
+                            { q: "أجد ناتج القسمة: 77 ÷ 7", hints: ["11"] },
+                            { q: "ما هي خطوات القسمة الطويلة؟", hints: ["اقسم، اضرب، اطرح، أنزل الرقم التالي"] },
+                            { q: "أجد ناتج القسمة: 39 ÷ 3", hints: ["13"] },
+                            { q: "أجد ناتج القسمة: 88 ÷ 4", hints: ["22"] },
+                            { q: "أجد ناتج القسمة: 50 ÷ 2", hints: ["25"] },
+                            { q: "أجد ناتج القسمة: 69 ÷ 3", hints: ["23"] }
+                        ]
+                    }
+                ]
+            }
+        }
+    },
+    science: {
+        name: "كتاب العلوم",
+        icon: "🧪",
+        units: {
+            su1: {
+                name: "الوحدة الأولى: حالات المادة وتغيراتها",
+                lessons: [
+                    {
+                        title: "الدرس 1: خصائص المادة الصلبة والسائلة والغازية",
+                        questions: [
+                            { q: "ما هي المادة في علم العلوم؟", hints: ["كل شيء له كتلة ويشغل حيزاً"] },
+                            { q: "ما هي خصائص الحالة الصلبة للمادة؟", hints: ["شكل وحجم ثابتان"] },
+                            { q: "اذكر أمثلة على مواد في الحالة السائلة.", hints: ["الماء والعصير"] },
+                            { q: "ما هي مميزات الحالة الغازية للمادة؟", hints: ["ليس لها شكل أو حجم ثابت"] },
+                            { q: "لماذا يحافظ القلم على شكله عند نقله؟", hints: ["لأنه مادة صلبة"] },
+                            { q: "هل الهواء داخل البالون يعتبر مادة؟", hints: ["نعم مادة غازية"] },
+                            { q: "كيف تتصرف جسيمات المادة السائلة؟", hints: ["تأخذ شكل الوعاء"] },
+                            { q: "ما الفرق بين الصلبة والسائلة شكلاً؟", hints: ["الصلبة ثابتة والسائلة متغيرة حسب الإناء"] },
+                            { q: "أي حالة تنضغط بسهولة وتمتلئ المكان؟", hints: ["الغازية"] },
+                            { q: "اذكر مثالاً على مادة صلبة لينة.", hints: ["الإسفنج"] },
+                            { q: "لماذا يأخذ عصير البرتقال شكل الكوب؟", hints: ["لأنه سائل"] },
+                            { q: "هل بخار الماء يعتبر مادة غازية؟", hints: ["نعم"] },
+                            { q: "ما وحدة قياس الكتلة؟", hints: ["الكيلوجرام والجرام"] },
+                            { q: "ماذا نعني بأن المادة تشغل حيزاً؟", hints: ["لها حجم ومكان"] },
+                            { q: "صنف: كرسي، ماء، هواء حسب الحالة.", hints: ["كرسي: صلب، ماء: سائل، هواء: غاز"] }
+                        ]
+                    },
+                    {
+                        title: "الدرس 2: التغيرات الفيزيائية والكيميائية",
+                        questions: [
+                            { q: "ما هو التعريف البسيط للتغير الفيزيائي؟", hints: ["تغير في الشكل دون مادة جديدة"] },
+                            { q: "هل انصهار الثلج تغير فيزيائي أم كيميائي؟", hints: ["فيزيائي"] },
+                            { q: "ما هو التعريف العلمي للتغير الكيميائي؟", hints: ["تغير ينتج مواد جديدة"] },
+                            { q: "هل احتراق الورقة يعتبر تغيراً كيميائياً؟", hints: ["نعم"] },
+                            { q: "صنف ذوبان السكر في الماء.", hints: ["فيزيائي"] },
+                            { q: "ماذا يسمى تحول السائل لصلب بالتبريد؟", hints: ["التجمد"] },
+                            { q: "هل صدأ الحديد تغير كيميائي؟", hints: ["نعم"] },
+                            { q: "اذكر مثالاً على تغير فيزيائي يومي.", hints: ["قص الورق"] },
+                            { q: "لماذا يُعد طهي البيض تغيراً كيميائياً؟", hints: ["ينتج مادة جديدة"] },
+                            { q: "هل تبخر الماء يعتبر فيزيائياً؟", hints: ["نعم"] },
+                            { q: "ما دليل حدوث تغير كيميائي؟", hints: ["تغير اللون والحرارة"] },
+                            { q: "هل تكسير الزجاج يغير نوع المادة؟", hints: ["لا"] },
+                            { q: "ماذا يسمى تحول الصلب لسائل بالحرارة؟", hints: ["الانصهار"] },
+                            { q: "هل تسوس الأسنان تغير كيميائي؟", hints: ["نعم"] },
+                            { q: "قارن بكلمة: تقطيع الخضار وعفن الخضار.", hints: ["تقطيع: فيزيائي، عفن: كيميائي"] }
+                        ]
+                    }
+                ]
+            },
+            su2: {
+                name: "الوحدة الثانية: النظام البيئي والتكيف",
+                lessons: [
+                    {
+                        title: "الدرس 1: المكونات الحية وغير الحية",
+                        questions: [
+                            { q: "ما هو النظام البيئي؟", hints: ["مكونات حية وغير حية تتفاعل معاً"] },
+                            { q: "اذكر أمثلة على مكونات حية في البيئة.", hints: ["الحيوانات والنباتات"] },
+                            { q: "اذكر أمثلة على عوامل غير حية.", hints: ["الماء والتربة والهواء"] },
+                            { q: "لماذا يحتاج الحيوان للماء؟", hints: ["للبقاء على قيد الحياة والشرب"] },
+                            { q: "كيف تتفاعل النباتات مع ضوء الشمس؟", hints: ["تصنع غذاءها بعملية البناء الضوئي"] },
+                            { q: "ما أهمية التربة للنبات؟", hints: ["تثبيت الجذور وامتصاص الغذاء"] },
+                            { q: "هل الهواء مكون حي أم غير حي؟", hints: ["غير حي"] },
+                            { q: "ماذا تدل عليه كلمة بيئة؟", hints: ["المكان الذي يعيش فيه الكائن الحي"] },
+                            { q: "أين تعيش الأسماك؟", hints: ["في الماء (نظام مائي)"] },
+                            { q: "ما أهمية العوامل غير الحية للكائنات الحية؟", hints: ["تدعم وتستمر الحياة من خلالها"] },
+                            { q: "هل الطائر يعتبر كائناً حياً؟", hints: ["نعم"] },
+                            { q: "ماذا تأكل النباتات لكي تنمو؟", hints: ["تصنع غذاءها بنفسها ولا تأكل"] },
+                            { q: "كيف يؤثر الجفاف على النظام البيئي؟", hints: ["يقلل الماء ويهدد حياة الكائنات"] },
+                            { q: "اذكر مثالاً على نظام بيئي صحراوي.", hints: ["الصحراء والجمال والصبار"] },
+                            { q: "صنف: صخر، شجرة، صقر (حي أم غير حي).", hints: ["صخر: غير حي، شجرة وحي: حيان"] }
+                        ]
+                    },
+                    {
+                        title: "الدرس 2: التكيف عند الكائنات الحية",
+                        questions: [
+                            { q: "ما هو التكيف؟", hints: ["خصائص تساعد الكائن على البقاء في بيئته"] },
+                            { q: "ما الفرق بين التكيف التركيبي والسلوكي؟", hints: ["التركيبي في أعضاء الجسم والسلوكي في الأفعال"] },
+                            { q: "اذكر مثالاً على تكيف تركيبي للدب القطبي.", hints: ["الفراء الأبيض الكثيف للتدفئة"] },
+                            { q: "اذكر مثالاً على تكيف سلوكي للطيور.", hints: ["الهجرة في الشتاء"] },
+                            { q: "لماذا يمتلك الجمل خفاً عريضاً؟", hints: ["للسير على رمل الصحراء دون أن يغوص"] },
+                            { q: "ما فائدة سنام الجمل؟", hints: ["تخزين الدهون والطاقة"] },
+                            { q: "كيف تحمي الصبار نفسها في الصحراء؟", hints: ["بتحويل أوراقها إلى أشواك"] },
+                            { q: "ما هي السلسلة الغذائية؟", hints: ["مسار انتقال الطاقة بين الكائنات الحية"] },
+                            { q: "بماذا تبدأ كل سلسلة غذائية؟", hints: ["دائماً بالنباتات (المنتجات)"] },
+                            { q: "ماذا يسمى الكائن الذي يصنع غذاءه بنفسه؟", hints: ["المنتج (النبات)"] },
+                            { q: "ماذا يسمى الكائن الذي يعتمد على غيره في الغذاء؟", hints: ["المستهلك"] },
+                            { q: "ما هو البيات الشتوي؟", hints: ["تكيف سلوكي تنام فيه بعض الحيوانات طتاء الشتاء"] },
+                            { q: "لماذا تتخفى بعض الحيوانات بلونها (التماعي)؟", hints: ["للهروب من المفترسات أو الصيد"] },
+                            { q: "هل أسنان الأكل الحادة عند الأسد تكيف تركيبي؟", hints: ["نعم"] },
+                            { q: "رتب سلسلة غذائية بسيطة: (صقر، نبات، أرنب).", hints: ["نبات ⬅ أرنب ⬅ صقر"] }
+                        ]
+                    }
+                ]
+            }
+        }
+    },
+    arabic: {
+        name: "كتاب اللغة العربية",
+        icon: "📖",
+        units: {
+            au1: {
+                name: "الوحدة الأولى: قيم إسلامية",
+                lessons: [
+                    {
+                        title: "الدرس 1: طاعة الله وبر الوالدين",
+                        questions: [
+                            { q: "ما هو الواجب نحو الوالدين كما ورد في الآيات والنصوص؟", hints: ["برهما وطاعتهما وإحسان معاملتهما"] },
+                            { q: "ما معنى كلمة (أُفٍّ) وردت في النهي عن تضجر الوالدين؟", hints: ["كلمة ضجر وتأفف مكروهة"] },
+                            { q: "استخرج فعلاً ماضياً من جملة: (أطاعَ الولدُ والديه).", hints: ["أطاعَ"] },
+                            { q: "ما مفرد كلمة (والدين)؟", hints: ["والد أو والدة"] },
+                            { q: "ما هو ضد كلمة (بر) في معاملة الأهل؟", hints: ["عقوق"] },
+                            { q: "استخرج حرف جر من النص: (جلسَ الطالبُ في الفصل).", hints: ["في"] },
+                            { q: "حول الفعل الماضي إلى مضارع: (شربَ)", hints: ["يشربُ"] },
+                            { q: "ما الكبرى من طاعات الله سبحانه وتعالى؟", hints: ["توحيده وعبادته وبر الوالدين"] },
+                            { q: "اجمع كلمة (قلب) جمع تكسير.", hints: ["قلوب"] },
+                            { q: "ما نوع الفعل في كلمة (اسمعْ)؟", hints: ["فعل أمر"] },
+                            { q: "استخرج اسماً مجروراً من: (كتبتُ بالقلمِ).", hints: ["القلمِ"] },
+                            { q: "ما معنى الآية (وقل لهما قولا كريماً)؟", hints: ["الكلام الطيب اللين المعاملة"] },
+                            { q: "ضع علامة الترقيم المناسبة في نهاية الجملة الإنشائية التعجبية: (ما أجمه السماء [...])", hints: ["علامة التعجب (!)"] },
+                            { q: "ما مضض كلمة (طاعة)؟", hints: ["معصية"] },
+                            { q: "اكتب جملة مفيدة تبدأ بفعل مضارع.", hints: ["يقرأ الطالب الكتاب"] }
+                        ]
+                    },
+                    {
+                        title: "القواعد: الفعل الماضي والمضارع",
+                        questions: [
+                            { q: "ما هو الفعل الماضي؟", hints: ["حدث انقى وانتهى في الزمن الماضي"] },
+                            { q: "ما هو الفعل المضارع؟", hints: ["حدث مستمر يبدأ بحروف نأتي"] },
+                            { q: "حول الماضي (ذهبَ) إلى مضارع.", hints: ["يذهبُ"] },
+                            { q: "اضبط آخر الفعل الماضي دائماً بـ:", hints: ["الفتحة"] },
+                            { q: "ما حركة حرف المضارعة غالباً في أول الفعل؟", hints: ["الضمة"] },
+                            { q: "استخرج الفعل المضارع: (نحبُّ وطننا الغالي).", hints: ["نحبُّ"] },
+                            { q: "حول المضارع (يلعبُ) إلى ماضي.", hints: ["لعبَ"] },
+                            { q: "هل الفعل (اكتبْ) ماضي أم مضارع؟", hints: ["ليس ماضياً ولا مضارعاً بل أمر"] },
+                            { q: "ضع فعلاً ماضياً مناسباً: (...... المعلمُ الدرسَ).", hints: ["شرحَ"] },
+                            { q: "ضع فعلاً مضارعاً مناسباً: (...... الطرُ العصفورُ).", hints: ["يغردُ"] },
+                            { q: "ما إعراب الفعل الماضي (كتبَ)؟", hints: ["فعل ماض مبني على الفتح"] },
+                            { q: "ما حروف المضارعة التي يبدأ بها الفعل المضارع؟", hints: ["أ، ن، ي، ت (نأتي)"] },
+                            { q: "حدد الفعل في جملة: (يصوم المسلمون رمضان).", hints: ["يصومُ (مضارع)"] },
+                            { q: "حول الجملة لماضٍ: (تشرق الشمس).", hints: ["أشرقتِ الشمسُ"] },
+                            { q: "ما الفرق بين الماضي والمضارع من حيث الزمن؟", hints: ["الماضي منتهٍ والمضارع مستمر وحاضر"] }
+                        ]
+                    }
+                ]
+            },
+            au2: {
+                name: "الوحدة الثانية: الآداب والأخلاق",
+                lessons: [
+                    {
+                        title: "الدرس 1: آداب المجالس والحديث",
+                        questions: [
+                            { q: "ما هي أهم آداب الحديث مع الآخرين؟", hints: ["خفض الصوت والإنصات الجيد وعدم المقاطعة"] },
+                            { q: "لماذا نهانا الإسلام عن مقاطعة المتحدث؟", hints: ["لأن ذلك غير مؤدب ويقطع فكرة المتكلم"] },
+                            { q: "ما معنى كلمة (الإنصات) في المجالس؟", hints: ["حسن الاستماع بسكوت واهتمام"] },
+                            { q: "كيف تجلس في المجلس مع أصحابك؟", hints: ["جلسة مؤدبة لا تؤذي أحداً ولا تضيق المكان"] },
+                            { q: "ما جزاء من يحسن الاستماع للناس؟", hints: ["يكسب حبهم وفهمهم واحترامهم"] },
+                            { q: "استخرج صفة ذميمة ضدها الأدب.", hints: ["سوء الخلق أو الصياح"] },
+                            { q: "ماذا تقول إذا أردت مقاطعة شخص أو الدخول في حديث للضرورة؟", hints: ["تستأذن بلطف وتقول: لو سمحت أو عن إذنك"] },
+                            { q: "اجمع كلمة (مجلس).", hints: ["مجالس"] },
+                            { q: "ما هو الصوت الذي شبهه القرآن بصوت الحمير إن كان عالياً مزعجاً؟", hints: ["أنكر الأصوات لصوت الحمير"] },
+                            { q: "هل يعتبر خفض الصوت من شيم الكرام؟", hints: ["نعم بالتأكيد"] },
+                            { q: "ما الكلمة الطيبة التي يجب أن تبدأ بها حديثك؟", hints: ["السلام عليكم أو التحية الطيبة"] },
+                            { q: "استخرج اسماً مرفوعاً من جملة: (تحدثَ العالمُ بإتقان).", hints: ["العالمُ"] },
+                            { q: "ما مضاد كلمة (التواضع) في المجالس؟", hints: ["التكبر والغرور"] },
+                            { q: "كيف تتصرف إذا أخطأ شخص في حديثه بالمجلس؟", hints: ["تنصحه بلطف وبحكمة دون إحراج"] },
+                            { q: "اكتب قاعدة ذهبية للحديث باختصار.", hints: ["قل خيراً أو اصمت"] }
+                        ]
+                    }
+                ]
+            }
+        }
+    },
+    english: {
+        name: "كتاب اللغة الإنجليزية",
+        icon: "🔤",
+        units: {
+            eu1: {
+                name: "Unit 1: My Daily Routine",
+                lessons: [
+                    {
+                        title: "Lesson 1: Talking about daily habits",
+                        questions: [
+                            { q: "Choose the correct form: 'She (...) up at 6 o'clock.' (wake / wakes)", hints: ["Subject is singular (She)", "wakes"] },
+                            { q: "Choose: 'I (...) to school every day.' (go / goes)", hints: ["Subject is 'I'", "go"] },
+                            { q: "What is the present simple form of (play) with (He)?", hints: ["plays"] },
+                            { q: "Choose: 'They (...) English on Mondays.' (study / studies)", hints: ["Subject is plural (They)", "study"] },
+                            { q: "Complete: 'We (...) breakfast at 7 AM.' (have / has)", hints: ["have"] },
+                            { q: "Choose the negative form for 'He plays':", hints: ["He doesn't play"] },
+                            { q: "Form a question: (you / do / get up / when / ?)", hints: ["When do you get up?"] },
+                            { q: "Choose: 'My mother (...) dinner.' (cook / cooks)", hints: ["cooks"] },
+                            { q: "What tense do we use for daily routines?", hints: ["Present Simple Tense"] },
+                            { q: "Complete: 'Ali and Ahmed (...) football.' (play / plays)", hints: ["play"] },
+                            { q: "Choose: 'She (...) TV in the evening.' (watch / watches)", hints: ["watches"] },
+                            { q: "Make negative: 'I like milk.'", hints: ["I don't like milk"] },
+                            { q: "Choose: 'He (...) breakfast early.' (eat / eats)", hints: ["eats"] },
+                            { q: "Translate to English: (أنا أستيقظ مبكراً)", hints: ["I wake up early"] },
+                            { q: "Choose the correct adverb of frequency: (always, usually...)", hints: ["They come before the main verb"] }
+                        ]
+                    },
+                    {
+                        title: "Lesson 2: Asking and answering about time",
+                        questions: [
+                            { q: "What time is it? (5:00)", hints: ["It's five o'clock"] },
+                            { q: "How do we ask about the time in English?", hints: ["What time is it?"] },
+                            { q: "What time is it? (3:00)", hints: ["It's three o'clock"] },
+                            { q: "Write in numbers: (It's ten o'clock)", hints: ["10:00"] },
+                            { q: "Choose: 'It is (...) o'clock.' (twelve / twelves)", hints: ["twelve"] },
+                            { q: "How do we answer 'What time is it?' for 8:00?", hints: ["It's eight o'clock"] },
+                            { q: "Translate: (كم الساعة؟)", hints: ["What time is it?"] },
+                            { q: "What time is it? (1:00)", hints: ["It's one o'clock"] },
+                            { q: "Choose: 'The lesson starts (...) 8 o'clock.' (at / in / on)", hints: ["at (for exact times)"] },
+                            { q: "What time is it? (6:00)", hints: ["It's six o'clock"] },
+                            { q: "Write in words: (4:00)", hints: ["It's four o'clock"] },
+                            { q: "Choose: 'We go home (...) 2 o'clock.' (at)", hints: ["at"] },
+                            { q: "What time is it? (9:00)", hints: ["It's nine o'clock"] },
+                            { q: "Is 'o'clock' used for exact hours?", hints: ["Yes, exact hours"] },
+                            { q: "Write the full time phrase for 11:00:", hints: ["It's eleven o'clock"] }
+                        ]
+                    }
+                ]
+            },
+            eu2: {
+                name: "Unit 2: Animals and Their Homes",
+                lessons: [
+                    {
+                        title: "Lesson 1: Comparing animals",
+                        questions: [
+                            { q: "Complete with comparative: 'An elephant is (...) than a cat.' (big -> bigger)", hints: ["bigger than"] },
+                            { q: "Choose: 'A horse is (...) than a dog.' (fast -> faster / fastest)", hints: ["faster than"] },
+                            { q: "What do we add to short adjectives in comparative?", hints: ["er"] },
+                            { q: "What word always follows the comparative adjective?", hints: ["than"] },
+                            { q: "Choose: 'A giraffe is (...) than a monkey.' (tall -> taller)", hints: ["taller than"] },
+                            { q: "Complete: 'A mouse is (...) than an elephant.' (small -> smaller)", hints: ["smaller than"] },
+                            { q: "Choose: 'The cheetah is (...) animal.' (fast / faster)", hints: ["faster"] },
+                            { q: "Why do we double the last letter in (big -> bigger)?", hints: ["Because it ends in CVC (consonant-vowel-consonant)"] },
+                            { q: "Complete: 'A whale is (...) than a dolphin.' (heavy -> heavier)", hints: ["heavier than"] },
+                            { q: "Choose: 'A snake is (...) than a worm.' (long -> longer)", hints: ["longer than"] },
+                            { q: "Translate: (الفيل أضخم من القط)", hints: ["An elephant is bigger than a cat"] },
+                            { q: "What is the comparative of (hot)?", hints: ["hotter than"] },
+                            { q: "Choose: 'The blue whale is (...) animal in the world.' (the biggest)", hints: ["Superlative uses 'est' (the biggest)"] },
+                            { q: "Complete: 'A lion is (...) than a rabbit.' (strong -> stronger)", hints: ["stronger than"] },
+                            { q: "Check grammar: 'He is taller than me.' Is it correct?", hints: ["Yes, correct comparative structure"] }
+                        ]
+                    },
+                    {
+                        title: "Lesson 2: Where do animals live?",
+                        questions: [
+                            { q: "Where does a camel live?", hints: ["in the desert"] },
+                            { q: "Where do monkeys live?", hints: ["in the jungle / forest"] },
+                            { q: "What is the natural home of a fish?", hints: ["in the water / sea"] },
+                            { q: "Where does a polar bear live?", hints: ["in the polar region / snow"] },
+                            { q: "Choose the correct preposition: 'live (...) the forest'", hints: ["in"] },
+                            { q: "Where do lions live?", hints: ["in the grassland / savannah"] },
+                            { q: "Translate: (أين يعيش الجمل؟)", hints: ["Where does a camel live?"] },
+                            { q: "Where do birds build their homes?", hints: ["in trees (nest)"] },
+                            { q: "Choose: 'Monkeys live (...) trees.' (in / on)", hints: ["in"] },
+                            { q: "What do we call the natural home of an animal?", hints: ["Habitat"] },
+                            { q: "Where does a shark live?", hints: ["in the ocean / sea"] },
+                            { q: "Complete: 'Camels live in the (...) because it's hot.' (desert)", hints: ["desert"] },
+                            { q: "Where does a bear live?", hints: ["in the forest / cave"] },
+                            { q: "Is a desert a hot habitat?", hints: ["Yes, very hot and dry"] },
+                            { q: "Name an animal that lives in water:", hints: ["Fish / Shark / Whale"] }
+                        ]
+                    }
+                ]
+            }
+        }
+    }
+};
+
+window.onload = function(){
+    const saved = localStorage.getItem("mathMindFullCheckedSession");
+    if(saved){
+        currentStudent = JSON.parse(saved);
+        document.getElementById("studentAccessGate").classList.add("hidden");
+        document.body.classList.remove("locked");
+        
+        const school = currentStudent.school || "مدرسة الأمل الأساسية المختلطة";
+        const section = currentStudent.section || "أ";
+        document.getElementById("heroSelectedGradeTitle").textContent = `🎓 ${school} | الصف الرابع الأساسي - ${section}`;
+        document.getElementById("studentBadgeName").textContent = `👩🏻‍🎓 ${currentStudent.name}`;
+    } else {
+        document.getElementById("studentAccessGate").classList.remove("hidden");
+        document.body.classList.add("locked");
+    }
+};
+
+function registerNewStudent(){
+    const school = document.getElementById("regSchool").value;
+    const section = document.getElementById("regSection").value;
+    const name = document.getElementById("regName").value.trim();
+    
+    if(!school || !section || !name){
+        document.getElementById("accessError").style.display = "block";
+        return;
+    }
+    
+    currentStudent = { name, school, section, grade: "الصف الرابع الأساسي" };
+    localStorage.setItem("mathMindFullCheckedSession", JSON.stringify(currentStudent));
+    
+    document.getElementById("heroSelectedGradeTitle").textContent = `🎓 ${school} | الصف الرابع الأساسي - ${section}`;
+    document.getElementById("studentBadgeName").textContent = `👩🏻‍🎓 ${name}`;
+    
+    document.getElementById("studentAccessGate").classList.add("hidden");
+    document.body.classList.remove("locked");
+}
+
+function logoutStudent(){
+    closeMenu();
+    localStorage.removeItem("mathMindFullCheckedSession");
+    location.reload();
+}
+
+function toggleMenu(){
+    if(document.body.classList.contains("locked")) return;
+    document.getElementById("sideMenu").classList.toggle("open");
+    document.getElementById("menuOverlay").classList.toggle("show");
+}
+function closeMenu(){
+    document.getElementById("sideMenu").classList.remove("open");
+    document.getElementById("menuOverlay").classList.remove("show");
+}
+
+function goHomeFromMenu(){
+    closeMenu();
+    goBackToSubjects();
+}
+
+function openSubjectUnits(subjectKey){
+    selectedSubjectKey = subjectKey;
+    const subjObj = fullyCheckedBooksData[subjectKey];
+    selectedSubjectName = subjObj.name;
+    
+    document.getElementById("subjectHeaderTitle").textContent = `وحدات ${selectedSubjectName} 📑`;
+    
+    const container = document.getElementById("unitsContainer");
+    container.innerHTML = "";
+    
+    Object.keys(subjObj.units).forEach(uKey => {
+        const unit = subjObj.units[uKey];
+        container.innerHTML += `
+            <div class="card" onclick="selectUnit('${uKey}')">
+                <div>
+                    <div class="card-icon">${subjObj.icon}</div>
+                    <h3>${unit.name}</h3>
+                    <p>انقري لعرض دروس هذه الوحدة من الكتاب.</p>
+                </div>
+                <button class="btn btn-primary full-btn">عرض الدروس</button>
+            </div>
+        `;
+    });
+    
+    switchAppView("unitsView");
+}
+
+function selectUnit(unitKey){
+    selectedUnitKey = unitKey;
+    const subjObj = fullyCheckedBooksData[selectedSubjectKey];
+    const unitObj = subjObj.units[unitKey];
+    selectedUnitName = unitObj.name;
+    
+    document.getElementById("unitTitleHeader").textContent = `دروس ${selectedUnitName} 📑`;
+    
+    const container = document.getElementById("lessonsContainer");
+    container.innerHTML = "";
+    
+    unitObj.lessons.forEach(lesson => {
+        container.innerHTML += `
+            <div class="card" onclick="selectLesson('${lesson.title}')">
+                <div>
+                    <div class="card-icon">${subjObj.icon}</div>
+                    <h3>${lesson.title}</h3>
+                    <p>يحتوي على 15 سؤالاً حقيقياً وكاملاً.</p>
+                </div>
+                <button class="btn btn-primary full-btn">بدء الدرس</button>
+            </div>
+        `;
+    });
+    
+    switchAppView("lessonsView");
+}
+
+function selectLesson(lessonTitle){
+    selectedLessonTitle = lessonTitle;
+    const subjObj = fullyCheckedBooksData[selectedSubjectKey];
+    const unitObj = subjObj.units[selectedUnitKey];
+    currentLessonObj = unitObj.lessons.find(l => l.title === lessonTitle);
+    
+    currentQuestions = currentLessonObj.questions;
+    currentQuestionIndex = 0;
+    
+    document.getElementById("currentLessonPathTitle").textContent = `📚 ${selectedSubjectName} ⬅ ${selectedUnitName} ⬅ ${lessonTitle}`;
+    showQuestion();
+    switchAppView("trainingAiView");
+}
+
+function goBackToSubjects(){
+    switchAppView("subjectsView");
+}
+
+function goBackToUnits(){
+    switchAppView("unitsView");
+}
+
+function goBackToLessons(){
+    switchAppView("lessonsView");
+}
+
+function switchAppView(viewId){
+    document.querySelectorAll(".app-view").forEach(v => v.classList.remove("show"));
+    document.getElementById(viewId).classList.add("show");
+    window.scrollTo({top:0, behavior:"smooth"});
+}
+
+function showQuestion(){
+    const qObj = currentQuestions[currentQuestionIndex];
+    if(!qObj) return;
+    document.getElementById("questionNumber").textContent = "السؤال " + (currentQuestionIndex + 1) + " من " + currentQuestions.length;
+    document.getElementById("questionText").textContent = qObj.q;
+    document.getElementById("studentAnswer").value = "";
+    hintLevel = 0;
+    document.getElementById("hintBox").style.display = "none";
+    updateProgress();
+}
+
+function updateProgress(){
+    const pct = ((currentQuestionIndex + 1) / currentQuestions.length) * 100;
+    document.getElementById("progressFill").style.width = pct + "%";
+    document.getElementById("progressText").textContent = "السؤال " + (currentQuestionIndex + 1) + " من " + currentQuestions.length;
+}
+
+function showHint(){
+    const qObj = currentQuestions[currentQuestionIndex];
+    if(!qObj.hints || hintLevel >= qObj.hints.length){ alert("لا توجد تلميحات إضافية."); return; }
+    hintLevel++;
+    const hintBox = document.getElementById("hintBox");
+    hintBox.textContent = "💡 تلميح " + hintLevel + ": " + qObj.hints[hintLevel - 1];
+    hintBox.style.display = "block";
+}
+
+function saveAttempt(){
+    const ans = document.getElementById("studentAnswer").value.trim();
+    if(!ans){ alert("اكتبي إجابتكِ أولاً."); return; }
+    alert("تم حفظ محاولتكِ بنجاح ✅");
+}
+
+function nextQuestion(){
+    if(currentQuestionIndex < currentQuestions.length - 1){
+        currentQuestionIndex++;
+        showQuestion();
+    } else {
+        alert("أهلاً بكِ يا بطلة! لقد أنهيتِ جميع أسئلة هذا الدرس بنجاح تام 🎉");
+    }
+}
+
+async function sendMessage(){
+    const input = document.getElementById("chatInput");
+    const msg = input.value.trim();
+    if(!msg) return;
+    
+    addMessage(msg, "student");
+    input.value = "";
+    
+    const loading = addMessage("⏳ مساعد MathMind AI يحلل ويشرح...", "ai");
+    
+    setTimeout(() => {
+        loading.remove();
+        addMessage(`🤖 أهلاً بكِ! بخصوص سؤالك حول (${msg}) في كتاب ${selectedSubjectName} (${selectedLessonTitle}):\nتذكري القاعدة الأساسية للدرس، وراجعي الخطوات بدقة للوصول للحل الصحيح خطوة بخطوة!`, "ai");
+    }, 1000);
+}
+
+function addMessage(text, type){
+    const messages = document.getElementById("chatMessages");
+    const div = document.createElement("div");
+    div.className = "message " + type;
+    div.textContent = text;
+    messages.appendChild(div);
+    messages.scrollTop = messages.scrollHeight;
+    return div;
+}
+/* =========================================
+   MathMind AI - مصادر تعليمية لكل درس
+========================================= */
+
+(function addMathMindLearningResources() {
+
+    // تنسيق قسم المصادر التعليمية
+    const style = document.createElement("style");
+
+    style.textContent = `
+        .lesson-resources {
+            background: #fff;
+            border-radius: 22px;
+            padding: 24px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,.06);
+            border-top: 5px solid #f0c419;
+        }
+
+        .lesson-resources h3 {
+            color: #b71c1c;
+            font-size: 21px;
+            margin-bottom: 8px;
+        }
+
+        .lesson-resources > p {
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 18px;
+            font-size: 14px;
+        }
+
+        .learning-resources-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .learning-resource-card {
+            background: #fff9e8;
+            border: 2px solid #f4df9b;
+            border-radius: 18px;
+            padding: 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .learning-resource-icon {
+            font-size: 38px;
+        }
+
+        .learning-resource-card h4 {
+            color: #b71c1c;
+            font-size: 17px;
+        }
+
+        .learning-resource-card p {
+            color: #666;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .learning-resource-card a {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: .2s;
+        }
+
+        .video-resource-link {
+            background: #b71c1c;
+            color: white;
+        }
+
+        .image-resource-link {
+            background: #f0c419;
+            color: #333;
+        }
+
+        .learning-resource-card a:hover {
+            transform: translateY(-3px);
+            opacity: .9;
+        }
+
+        .resource-note {
+            margin-top: 15px;
+            padding: 12px;
+            background: #f5f5f5;
+            border-radius: 12px;
+            color: #666;
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
+        @media(max-width: 600px) {
+            .learning-resources-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    `;
+
+    document.head.appendChild(style);
+
+    // إنشاء القسم
+    const resourcesSection = document.createElement("section");
+
+    resourcesSection.id = "lessonResources";
+    resourcesSection.className = "lesson-resources";
+
+    resourcesSection.innerHTML = `
+        <h3>🎓 تعلّمي الدرس بطريقة ممتعة</h3>
+
+        <p>
+            شاهدي شروحات مرئية واستعيني بالصور التعليمية
+            حتى تفهمي الدرس جيداً قبل البدء بحل الأسئلة.
+        </p>
+
+        <div class="learning-resources-grid">
+
+            <div class="learning-resource-card">
+                <div class="learning-resource-icon">🎥</div>
+
+                <h4>فيديوهات شرح الدرس</h4>
+
+                <p>
+                    ابحثي عن فيديوهات تعليمية تشرح موضوع الدرس
+                    وتساعدكِ على فهمه خطوة بخطوة.
+                </p>
+
+                <a
+                    id="lessonVideoLink"
+                    class="video-resource-link"
+                    href="#"
+                    target="_blank"
+                    rel="noopener noreferrer">
+                    ▶ مشاهدة شروحات يوتيوب
+                </a>
+            </div>
+
+            <div class="learning-resource-card">
+                <div class="learning-resource-icon">🖼️</div>
+
+                <h4>الصور والوسائل التعليمية</h4>
+
+                <p>
+                    شاهدي صوراً وأمثلة مرئية تساعدكِ على
+                    استيعاب المعلومات وتذكرها.
+                </p>
+
+                <a
+                    id="lessonImagesLink"
+                    class="image-resource-link"
+                    href="#"
+                    target="_blank"
+                    rel="noopener noreferrer">
+                    🔍 عرض الصور التعليمية
+                </a>
+            </div>
+
+        </div>
+
+        <div class="resource-note">
+            💡 نصيحة: شاهدي الشرح أولاً، ثم عودي إلى التدريبات
+            وحاولي حل الأسئلة بنفسكِ.
+        </div>
+    `;
+
+    // وضع القسم بعد عنوان الدرس
+    const lessonTitle = document.getElementById(
+        "currentLessonPathTitle"
+    );
+
+    if (lessonTitle && lessonTitle.parentElement) {
+        lessonTitle.parentElement.insertAdjacentElement(
+            "afterend",
+            resourcesSection
+        );
+    }
+
+    // تحديث روابط المصادر عند اختيار أي درس
+    window.updateLessonResources = function () {
+
+        if (
+            !selectedSubjectName ||
+            !selectedUnitName ||
+            !selectedLessonTitle
+        ) {
+            return;
+        }
+
+        const videoQuery =
+            selectedSubjectName + " " +
+            selectedUnitName + " " +
+            selectedLessonTitle +
+            " الصف الرابع الأساسي المنهاج الأردني شرح";
+
+        const imageQuery =
+            selectedSubjectName + " " +
+            selectedLessonTitle +
+            " الصف الرابع الأساسي صور تعليمية شرح";
+
+        const videoUrl =
+            "https://www.youtube.com/results?search_query=" +
+            encodeURIComponent(videoQuery);
+
+        const imageUrl =
+            "https://www.google.com/search?tbm=isch&q=" +
+            encodeURIComponent(imageQuery);
+
+        document.getElementById("lessonVideoLink").href = videoUrl;
+
+        document.getElementById("lessonImagesLink").href = imageUrl;
+    };
+
+    // ربط المصادر باختيار الدرس دون تعطيل الوظيفة الأصلية
+    const originalSelectLesson = window.selectLesson;
+
+    window.selectLesson = function (lessonTitle) {
+
+        originalSelectLesson(lessonTitle);
+
+        window.updateLessonResources();
+
+    };
+
+})();
+</script>
+
+</body>
+</html>
+

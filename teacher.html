@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MathMind AI | بوابة المعلم الذكية</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
+body { background: linear-gradient(135deg, #fff8df, #ffe082, #fff4c2); color: #333; direction: rtl; text-align: right; min-height: 100vh; }
+body.locked { overflow: hidden; }
+
+.teacher-access-gate {
+    position: fixed; inset: 0; z-index: 5000;
+    background: linear-gradient(135deg, #fff8df, #ffe082, #fff4c2);
+    display: flex; align-items: center; justify-content: center; padding: 25px;
+}
+.teacher-access-gate.hidden { display: none !important; }
+.access-card {
+    width: 100%; max-width: 480px; background: white; border-radius: 28px;
+    padding: 35px 28px; text-align: center; box-shadow: 0 15px 45px rgba(0,0,0,.18); border-top: 7px solid #b71c1c;
+}
+.access-logo { font-size: 55px; margin-bottom: 10px; }
+.access-card h1 { color: #b71c1c; margin-bottom: 10px; }
+.access-card p { color: #666; line-height: 1.8; margin-bottom: 20px; font-size: 15px; }
+.form-step { text-align: right; margin-bottom: 15px; }
+.form-step label { display: block; margin-bottom: 6px; font-weight: bold; color: #333; font-size: 14px; }
+.input { width: 100%; padding: 12px 15px; border: 2px solid #ddd; border-radius: 12px; font-size: 15px; outline: none; transition: .2s; }
+.input:focus { border-color: #b71c1c; }
+.btn { padding: 12px 22px; border: none; border-radius: 14px; font-size: 16px; font-weight: bold; cursor: pointer; transition: .2s; }
+.btn-primary { background: #b71c1c; color: white; }
+.btn-primary:hover { background: #961515; }
+.btn-yellow { background: #f0c419; color: #333; }
+.btn-yellow:hover { background: #dcb00f; }
+.btn-light { background: #eee; color: #333; }
+.btn-light:hover { background: #ddd; }
+.full-btn { width: 100%; }
+.access-error { color: #b71c1c; background: #ffebee; padding: 12px; border-radius: 12px; margin-top: 15px; display: none; font-weight: bold; font-size: 13px; }
+
+.menu-button {
+    position: fixed; top: 22px; right: 22px; z-index: 1000; width: 52px; height: 52px; border: none; border-radius: 16px; background: #b71c1c; color: white; font-size: 25px; cursor: pointer; box-shadow: 0 8px 22px rgba(0,0,0,.18);
+}
+.side-menu {
+    position: fixed; top: 0; right: -330px; width: 310px; max-width: 85vw; height: 100vh; background: white; z-index: 999; padding: 90px 22px 25px; box-shadow: -10px 0 30px rgba(0,0,0,.15); transition: .3s; overflow-y: auto;
+}
+.side-menu.open { right: 0; }
+.menu-title { font-size: 22px; font-weight: bold; color: #b71c1c; margin-bottom: 25px; }
+.menu-item {
+    width: 100%; border: none; background: #fff8df; border-right: 5px solid #d32f2f; padding: 18px; border-radius: 16px; margin-bottom: 14px; text-align: right; font-size: 17px; font-weight: bold; cursor: pointer; transition: .2s;
+}
+.menu-item:hover { transform: translateX(-3px); background: #fff1b8; }
+.menu-close { width: 100%; margin-top: 15px; }
+.menu-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.35); z-index: 998; display: none; }
+.menu-overlay.show { display: block; }
+
+.container { max-width: 1200px; margin: 0 auto; padding: 25px; }
+.header { background: white; border-radius: 20px; padding: 20px 25px; box-shadow: 0 5px 20px rgba(0,0,0,.06); margin-bottom: 25px; }
+.header-box { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px; }
+.logo { display: flex; align-items: center; gap: 15px; }
+.logo-icon { font-size: 40px; }
+.logo-text strong { display: block; font-size: 20px; color: #b71c1c; }
+.logo-text span { font-size: 14px; color: #666; }
+.header-badge { background: #fff8df; border: 2px solid #f0c419; padding: 8px 16px; border-radius: 12px; font-weight: bold; color: #7a5600; }
+
+.cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; width: 100%; }
+.card { background: white; border-radius: 22px; padding: 25px; box-shadow: 0 8px 25px rgba(0,0,0,.06); cursor: pointer; transition: .2s; border-top: 5px solid #b71c1c; display: flex; flex-direction: column; justify-content: space-between; min-height: 220px; }
+.card:hover { transform: translateY(-4px); box-shadow: 0 12px 30px rgba(0,0,0,.1); }
+.card-icon { font-size: 38px; margin-bottom: 12px; }
+.card h3 { color: #b71c1c; font-size: 20px; margin-bottom: 8px; }
+.card p { color: #666; font-size: 14px; line-height: 1.6; margin-bottom: 15px; }
+
+.app-view { display: none; }
+.app-view.show { display: block; }
+
+.selected-grade-display-box {
+    background: linear-gradient(135deg, #fff8df, #ffffff);
+    border: 3px solid #f0c419; border-radius: 20px; padding: 18px 24px; text-align: center; margin-bottom: 25px; box-shadow: 0 6px 20px rgba(240, 196, 25, 0.2);
+}
+.selected-grade-display-box h2 { color: #b71c1c; font-size: 22px; font-weight: 800; margin: 0; }
+
+.content-box { background: white; border-radius: 22px; padding: 25px; box-shadow: 0 8px 25px rgba(0,0,0,.06); margin-bottom: 25px; }
+
+.table-responsive { width: 100%; overflow-x: auto; }
+.data-table { width: 100%; border-collapse: collapse; margin-top: 15px; text-align: right; }
+.data-table th, .data-table td { padding: 14px 18px; border-bottom: 1px solid #eee; font-size: 15px; }
+.data-table th { background: #fff8df; color: #b71c1c; font-weight: bold; }
+.data-table tr:hover { background: #fff9e8; }
+
+.ai-chat-box { background: white; border-radius: 22px; padding: 20px; box-shadow: 0 8px 25px rgba(0,0,0,.08); }
+.chat-messages { height: 350px; overflow-y: auto; padding: 16px; margin-bottom: 15px; background: #fff9e8; border-radius: 18px; }
+.message { padding: 12px 16px; border-radius: 16px; margin-bottom: 12px; max-width: 88%; line-height: 1.8; white-space: pre-wrap; }
+.message.teacher { background: #ffe082; margin-right: auto; }
+.message.ai { background: #f1f1f1; margin-left: auto; }
+.chat-input-row { display: flex; gap: 10px; align-items: stretch; }
+.chat-input { flex: 1; min-height: 58px; resize: none; }
+
+.footer { text-align: center; padding: 20px; color: #777; font-size: 14px; }
+@media(max-width: 800px) { .cards { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body class="locked">
+
+<!-- بوابة تسجيل المعلم -->
+<div id="teacherAccessGate" class="teacher-access-gate">
+    <div class="access-card">
+        <div class="access-logo">👩‍🏫</div>
+        <h1>MathMind AI | بوابة المعلم</h1>
+        <p>لوحة التحكم الشاملة لتحليل أداء الطالبات وإدارة المنهاج:</p>
+
+        <div class="form-step">
+            <label>المدرسة</label>
+            <select id="teacherSchool" class="input">
+                <option value="">-- اختاري المدرسة --</option>
+                <option value="مدرسة الأمل الأساسية المختلطة">مدرسة الأمل الأساسية المختلطة</option>
+                <option value="مدرسة التفوق النموذجية">مدرسة التفوق النموذجية</option>
+            </select>
+        </div>
+
+        <div class="form-step">
+            <label>المبحث الدراسي</label>
+            <select id="teacherSubject" class="input">
+                <option value="">-- اختاري المبحث --</option>
+                <option value="الرياضيات">الرياضيات (الصف الرابع)</option>
+                <option value="العلوم">العلوم (الصف الرابع)</option>
+                <option value="اللغة العربية">اللغة العربية (الصف الرابع)</option>
+                <option value="اللغة الإنجليزية">اللغة الإنجليزية (Action Pack)</option>
+            </select>
+        </div>
+
+        <div class="form-step">
+            <label>اسم المعلمة الثلاثي</label>
+            <input id="teacherName" class="input" type="text" placeholder="الاسم الثلاثي">
+        </div>
+
+        <button class="btn btn-primary full-btn" style="margin-top:10px;" onclick="registerTeacher()">دخول لوحة تحكم المعلمة</button>
+        <div id="accessError" class="access-error">❌ يرجى إكمال إدخال جميع البيانات المطلوبة.</div>
+    </div>
+</div>
+
+<!-- القائمة الجانبية للمعلمة -->
+<button class="menu-button" onclick="toggleMenu()" aria-label="القائمة">☰</button>
+<div id="menuOverlay" class="menu-overlay" onclick="closeMenu()"></div>
+<aside id="sideMenu" class="side-menu">
+    <div class="menu-title">👩‍🏫 لوحة المعلمة</div>
+    <button class="menu-item" onclick="switchView('dashboardView')">🏠 <span>الرئيسية ونظرة عامة</span></button>
+    <button class="menu-item" onclick="switchView('studentsView')">📊 <span>تقارير وتلميحات الطالبات</span></button>
+    <button class="menu-item" onclick="switchView('aiAssistantView')">🤖 <span>مساعد المعلم الذكي (AI)</span></button>
+    <button class="menu-item" onclick="switchView('assignmentsView')">📝 <span>إنشاء الواجبات والكويزات</span></button>
+    <button class="menu-item" style="background:#ffebee; border-right-color:#b71c1c; color:#b71c1c;" onclick="logoutTeacher()">🚪 <span>تسجيل خروج</span></button>
+    <button class="btn btn-light full-btn menu-close" onclick="closeMenu()">إغلاق القائمة</button>
+</aside>
+
+<div class="container">
+<header class="header">
+    <div class="header-box">
+        <div class="logo">
+            <div class="logo-icon">👩‍🏫</div>
+            <div class="logo-text">
+                <strong>MathMind AI | المعلم</strong>
+                <span>نظام المتابعة والتحليل الذكي للثغرات الفردية</span>
+            </div>
+        </div>
+        <div class="header-badge" id="teacherBadgeName">👩🏻‍🏫 المعلمة</div>
+    </div>
+</header>
+
+<section class="section">
+    <div class="selected-grade-display-box">
+        <h2 id="heroTeacherTitle">🎓 مدرسة الأمل | مبحث الرياضيات - الصف الرابع الأساسي</h2>
+    </div>
+</section>
+
+<!-- 1. الرئيسية ونظرة عامة -->
+<section id="dashboardView" class="section app-view show">
+    <div class="content-box" style="text-align:center; margin-bottom:20px;">
+        <h2 style="color:#b71c1c; margin-bottom:8px;">نظرة شاملة على الشعب الدراسية 📈</h2>
+        <p style="color:#666;">متابعة فورية لمستويات الطالبات، التلميحات المطلوبة، ونتائج التدريبات:</p>
+    </div>
+    <div class="cards">
+        <div class="card" onclick="switchView('studentsView')">
+            <div>
+                <div class="card-icon">👥</div>
+                <h3>الشعبة (أ) - 28 طالبة</h3>
+                <p>متوسط الأداء العام: 88% | أبرز ثغرة: القسمة الطويلة.</p>
+            </div>
+            <button class="btn btn-primary full-btn">استعراض تقارير الشعبة</button>
+        </div>
+        <div class="card" onclick="switchView('studentsView')">
+            <div>
+                <div class="card-icon">👥</div>
+                <h3>الشعبة (ب) - 25 طالبة</h3>
+                <p>متوسط الأداء العام: 82% | أبرز ثغرة: تقريب الأعداد.</p>
+            </div>
+            <button class="btn btn-primary full-btn">استعراض تقارير الشعبة</button>
+        </div>
+        <div class="card" onclick="switchView('aiAssistantView')">
+            <div>
+                <div class="card-icon">🤖</div>
+                <h3>استراتيجيات مقترحة من الـ AI</h3>
+                <p>تحليل ذكي لمعالجة نقاط ضعف الطالبات وإعداد خطط أسبوعية.</p>
+            </div>
+            <button class="btn btn-yellow full-btn">فتح مساعد المعلم الذكي</button>
+        </div>
+        <div class="card" onclick="switchView('assignmentsView')">
+            <div>
+                <div class="card-icon">📝</div>
+                <h3>إدارة الواجبات والاختبارات</h3>
+                <p>إنشاء ونشر كويزات تراعي الفروق الفردية للطالبات.</p>
+            </div>
+            <button class="btn btn-yellow full-btn">إنشاء واجب جديد</button>
+        </div>
+    </div>
+</section>
+
+<!-- 2. تقارير وتلميحات الطالبات -->
+<section id="studentsView" class="section app-view">
+    <div class="content-box">
+        <h3 style="color:#b71c1c; margin-bottom:15px;">📊 تحليل أداء الطالبات والتلميحات المستخدمة</h3>
+        <p style="color:#666; margin-bottom:20px;">سجل تفصيلي يوضح الأسئلة التي احتاجت فيها الطالبة لتلميحات أو استعانة بالمساعد الذكي:</p>
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>اسم الطالبة</th>
+                        <th>الشعبة</th>
+                        <th>الدرس / التارين</th>
+                        <th>عدد التلميحات المطلوبة</th>
+                        <th>حالة الفهم وتحليل الذكاء الاصطناعي</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><b>سارة أحمد</b></td>
+                        <td>أ</td>
+                        <td>القسمة الطويلة - الدرس 2</td>
+                        <td>3 تلميحات</td>
+                        <td><span style="color:#d32f2f; font-weight:bold;">تحتاج تعزيز في خطوات الطرح</span></td>
+                    </tr>
+                    <tr>
+                        <td><b>ليندا محمد</b></td>
+                        <td>أ</td>
+                        <td>تقريب الأعداد الكلية</td>
+                        <td>1 تلميح</td>
+                        <td><span style="color:#2e7d32; font-weight:bold;">مستواها ممتاز وتجاوزت التحدي</span></td>
+                    </tr>
+                    <tr>
+                        <td><b>مريم خالد</b></td>
+                        <td>ب</td>
+                        <td>ضرب مضاعفات 100</td>
+                        <td>2 تلميحات</td>
+                        <td><span style="color:#f57c00; font-weight:bold;">تخلط أحياناً في إنزال الأصفار</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- 3. مساعد المعلم الذكي (AI) -->
+<section id="aiAssistantView" class="section app-view">
+    <div class="ai-chat-box">
+        <h3 style="color:#b71c1c; margin-bottom:15px; border-bottom:2px solid #eee; padding-bottom:10px;">🤖 مساعد المعلم التحليلي والتربوي</h3>
+        <div id="chatMessages" class="chat-messages">
+            <div class="message ai">
+                أهلاً بكِ أستاذتي الفاضلة 👩‍🏫. بناءً على تلميحات وأداء طالبات الصف الرابع اليوم، لوحظ وجود ضعف في درس (القسمة الطويلة). هل ترغبين بأن أصمم لكِ خطة علاجية لمدة 10 دقائق لكل حصة، أو أقترح عليكِ أسئلة امتحانية تراعي الفروق الفردية؟
+            </div>
+        </div>
+        <div class="chat-input-row">
+            <textarea id="chatInput" class="input chat-input" placeholder="اطلبي من مساعد الذكاء الاصطناعي تحليل الثغرات أو اقتراح استراتيجيات..."></textarea>
+            <button class="btn btn-primary" onclick="sendTeacherMessage()">إرسال الطلب</button>
+        </div>
+    </div>
+</section>
+
+<!-- 4. إنشاء الواجبات والكويزات -->
+<section id="assignmentsView" class="section app-view">
+    <div class="content-box">
+        <h3 style="color:#b71c1c; margin-bottom:15px;">📝 إنشاء واجب أو كويز جديد للطالبات</h3>
+        <p style="color:#666; margin-bottom:20px;">الأسئلة التي تكتبيها هنا ستظهر مباشرة في صفحة كل طالبة عبر المنصة:</p>
+        
+        <div class="form-step">
+            <label>عنوان الواجب أو الكويز</label>
+            <input type="text" class="input" placeholder="مثال: اختبار قصير في وحدة القسمة والضرب">
+        </div>
+
+        <div class="form-step">
+            <label>الشعبة المستهدفة</label>
+            <select class="input">
+                <option value="all">جميع الشعب</option>
+                <option value="a">الشعبة أ</option>
+                <option value="b">الشعبة ب</option>
+            </select>
+        </div>
+
+        <div class="form-step">
+            <label>نص السؤال أو محتوى الاختبار</label>
+            <textarea class="input" rows="4" placeholder="اكتبي الأسئلة هنا..."></textarea>
+        </div>
+
+        <button class="btn btn-primary full-btn" onclick="alert('✅ تم نشر الواجب بنجاح وإرساله إلى منصات الطالبات!')">نشر الواجب إلى الطالبات</button>
+    </div>
+</section>
+
+<footer class="footer">
+    <p>MathMind AI Teacher Portal ©️ 2026</p>
+</footer>
+</div>
+
+<script>
+let currentTeacher = null;
+
+function registerTeacher() {
+    const school = document.getElementById('teacherSchool').value;
+    const subject = document.getElementById('teacherSubject').value;
+    const name = document.getElementById('teacherName').value.trim();
+    const errorBox = document.getElementById('accessError');
+
+    if (!school || !subject || !name) {
+        errorBox.style.display = 'block';
+        return;
+    }
+    errorBox.style.display = 'none';
+    currentTeacher = { school, subject, name };
+
+    document.getElementById('teacherBadgeName').innerText = `👩🏻‍🏫 ${name}`;
+    document.getElementById('heroTeacherTitle').innerText = `🎓 ${school} | مبحث ${subject} - الصف الرابع الأساسي`;
+    document.getElementById('teacherAccessGate').classList.add('hidden');
+    document.body.classList.remove('locked');
+}
+
+function toggleMenu() {
+    document.getElementById('sideMenu').classList.toggle('open');
+    document.getElementById('menuOverlay').classList.toggle('show');
+}
+
+function closeMenu() {
+    document.getElementById('sideMenu').classList.remove('open');
+    document.getElementById('menuOverlay').classList.remove('show');
+}
+
+function switchView(viewId) {
+    closeMenu();
+    document.querySelectorAll('.app-view').forEach(v => v.classList.remove('show'));
+    document.getElementById(viewId).classList.add('show');
+}
+
+function logoutTeacher() {
+    closeMenu();
+    document.getElementById('teacherAccessGate').classList.remove('hidden');
+    document.body.classList.add('locked');
+    document.getElementById('teacherName').value = '';
+    document.getElementById('teacherSchool').value = '';
+    document.getElementById('teacherSubject').value = '';
+}
+
+function sendTeacherMessage() {
+    const input = document.getElementById('chatInput');
+    const msg = input.value.trim();
+    if (!msg) return;
+
+    const chatMessages = document.getElementById('chatMessages');
+    
+    const teacherDiv = document.createElement('div');
+    teacherDiv.className = 'message teacher';
+    teacherDiv.innerText = msg;
+    chatMessages.appendChild(teacherDiv);
+    input.value = '';
+
+    setTimeout(() => {
+        const aiDiv = document.createElement('div');
+        aiDiv.className = 'message ai';
+        aiDiv.innerText = `أستاذتي الفاضلة، بناءً على طلبكِ (${msg})، أقترح تقديم تمريناً بصرياً مبسطاً لمدة 5 دقائق يوضح خطوات القسمة الطويلة كخطوات متسلسلة لتقليل أخطاء الطالبات. هل أحضِر لك نموذج أسئلة مقترح؟`;
+        chatMessages.appendChild(aiDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }, 900);
+}
+</script>
+</body>
+</html>

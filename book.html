@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MathMind AI | كتاب الرياضيات</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: Tahoma, Arial, sans-serif;
+            min-height: 100vh;
+            color: #2d2020;
+            background:
+                linear-gradient(135deg, rgba(250,204,21,.13), rgba(185,28,28,.07)),
+                #fffaf1;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            opacity: .14;
+            background-image:
+                linear-gradient(rgba(185,28,28,.08) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(185,28,28,.08) 1px, transparent 1px);
+            background-size: 34px 34px;
+        }
+        .top-line {
+            height: 5px;
+            background: linear-gradient(90deg, #991b1b, #ef4444, #facc15);
+        }
+        header {
+            padding: 15px 5%;
+            background: rgba(255,255,255,.95);
+            border-bottom: 1px solid #ead8bd;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            backdrop-filter: blur(12px);
+        }
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .logo {
+            width: 48px;
+            height: 48px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #991b1b, #ef4444);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 27px;
+            font-weight: bold;
+            box-shadow: 0 8px 20px rgba(153,27,27,.2);
+        }
+        .brand h1 {
+            color: #991b1b;
+            font-size: 19px;
+        }
+        .brand p {
+            color: #847272;
+            font-size: 11px;
+            margin-top: 3px;
+        }
+        .back-btn {
+            border: none;
+            background: #fff4d5;
+            color: #795400;
+            border: 1px solid #ecd477;
+            padding: 10px 17px;
+            border-radius: 12px;
+            font-family: inherit;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        main {
+            width: min(1250px, 94%);
+            margin: 25px auto 50px;
+        }
+        .hero {
+            background: linear-gradient(135deg, #991b1b, #dc2626 60%, #f59e0b);
+            border-radius: 27px;
+            padding: 31px 35px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 18px 40px rgba(153,27,27,.2);
+        }
+        .hero::after {
+            content: "∫   π   Σ   √   x²";
+            position: absolute;
+            left: 25px;
+            bottom: 8px;
+            font-size: 43px;
+            letter-spacing: 10px;
+            opacity: .08;
+        }
+        .hero h2 {
+            font-size: 29px;
+            margin-bottom: 9px;
+        }
+        .hero p {
+            font-size: 13px;
+            line-height: 1.9;
+            color: rgba(255,255,255,.92);
+            max-width: 750px;
+        }
+        .layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 18px;
+            margin-top: 20px;
+            direction: ltr;
+        }
+        .sidebar,
+        .viewer {
+            direction: rtl;
+        }
+        .sidebar {
+            background: rgba(255,255,255,.96);
+            border: 1px solid #ead8bd;
+            border-radius: 22px;
+            padding: 18px;
+            height: fit-content;
+            position: sticky;
+            top: 90px;
+        }
+        .sidebar-title {
+            font-size: 16px;
+            color: #3d2929;
+            margin-bottom: 14px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #eadfce;
+        }
+        .unit {
+            margin-bottom: 9px;
+        }
+        .unit-btn {
+            width: 100%;
+            border: 1px solid #eadbc7;
+            background: #fffaf0;
+            border-radius: 12px;
+            padding: 12px;
+            text-align: right;
+            font-family: inherit;
+            font-weight: bold;
+            color: #4d3030;
+            cursor: pointer;
+        }
+        .unit-btn:hover,
+        .unit-btn.active {
+            background: #fff0c7;
+            border-color: #e7c65d;
+        }
+        .lesson-list {
+            display: none;
+            padding: 6px 5px 2px;
+        }
+        .lesson-list.show {
+            display: block;
+        }
+        .lesson {
+            padding: 8px 10px;
+            color: #776767;
+            font-size: 11px;
+            border-radius: 8px;
+            line-height: 1.6;
+        }
+        .lesson:hover {
+            background: #fff5df;
+            color: #991b1b;
+        }
+        .viewer {
+            background: white;
+            border: 1px solid #ead8bd;
+            border-radius: 22px;
+            overflow: hidden;
+            box-shadow: 0 12px 30px rgba(77,42,0,.08);
+        }
+        .viewer-head {
+            padding: 15px 18px;
+            background: #fffaf2;
+            border-bottom: 1px solid #eadfce;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+        .viewer-head strong {
+            color: #4b2929;
+            font-size: 14px;
+        }
+        .pdf-buttons {
+            display: flex;
+            gap: 7px;
+        }
+        .pdf-btn {
+            text-decoration: none;
+            border: none;
+            padding: 8px 11px;
+            border-radius: 9px;
+            background: #991b1b;
+            color: white;
+            font-family: inherit;
+            font-size: 11px;
+            cursor: pointer;
+        }
+        .pdf-btn.secondary {
+            background: #f4e7cc;
+            color: #6a4a22;
+        }
+        .pdf-frame {
+            width: 100%;
+            height: 760px;
+            border: none;
+            display: block;
+            background: #f4f4f4;
+        }
+        .notice {
+            padding: 17px;
+            background: #fff8e6;
+            border-top: 1px solid #ead8bd;
+            color: #71552c;
+            font-size: 11px;
+            line-height: 1.8;
+        }
+        .notice strong {
+            color: #991b1b;
+        }
+        @media (max-width: 850px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                position: static;
+            }
+            .lesson-list {
+                display: block;
+            }
+            .pdf-frame {
+                height: 650px;
+            }
+        }
+        @media (max-width: 550px) {
+            header {
+                padding: 12px 4%;
+            }
+            .brand p {
+                display: none;
+            }
+            main {
+                width: 95%;
+                margin-top: 17px;
+            }
+            .hero {
+                padding: 25px 20px;
+                border-radius: 22px;
+            }
+            .hero h2 {
+                font-size: 24px;
+            }
+            .viewer-head {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .pdf-buttons {
+                width: 100%;
+            }
+            .pdf-btn {
+                flex: 1;
+                text-align: center;
+            }
+            .pdf-frame {
+                height: 600px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="top-line"></div>
+<header>
+    <div class="brand">
+        <div class="logo">∫</div>
+        <div>
+            <h1>MathMind AI</h1>
+            <p>مساعد الرياضيات الذكي</p>
+        </div>
+    </div>
+    <button class="back-btn" onclick="goBack()">
+        ← العودة
+    </button>
+</header>
+<main>
+    <section class="hero">
+        <h2>📚 كتاب الرياضيات</h2>
+        <p>
+            كتاب الرياضيات للصف الثاني عشر — المسار الأكاديمي —
+            الفصل الدراسي الأول.
+            يمكنكِ تصفح الكتاب مباشرة من داخل MathMind AI.
+        </p>
+    </section>
+    <section class="layout">
+        <!-- القائمة الجانبية -->
+        <aside class="sidebar">
+            <div class="sidebar-title">
+                📖 محتويات الكتاب
+            </div>
+            <div class="unit">
+                <button class="unit-btn" onclick="toggleUnit(1)">
+                    الوحدة الأولى
+                </button>
+                <div class="lesson-list" id="unit1">
+                    <div class="lesson">
+                        الدرس 1: نظريتا الباقي والعوامل
+                    </div>
+                    <div class="lesson">
+                        الدرس 2: الكسور الجزئية
+                    </div>
+                    <div class="lesson">
+                        اختبار نهاية الوحدة
+                    </div>
+                </div>
+            </div>
+            <div class="unit">
+                <button class="unit-btn" onclick="toggleUnit(2)">
+                    الوحدة الثانية
+                </button>
+                <div class="lesson-list" id="unit2">
+                    <div class="lesson">
+                        الدرس 1: المتطابقات المثلثية 1
+                    </div>
+                    <div class="lesson">
+                        الدرس 2: المتطابقات المثلثية 2
+                    </div>
+                    <div class="lesson">
+                        الدرس 3: حل المعادلات المثلثية
+                    </div>
+                    <div class="lesson">
+                        اختبار نهاية الوحدة
+                    </div>
+                </div>
+            </div>
+            <div class="unit">
+                <button class="unit-btn" onclick="toggleUnit(3)">
+                    الوحدة الثالثة
+                </button>
+                <div class="lesson-list" id="unit3">
+                    <div class="lesson">
+                        الدرس 1: مشتقة اقترانات خاصة
+                    </div>
+                    <div class="lesson">
+                        الدرس 2: مشتقتا الضرب والقسمة والمشتقات العليا
+                    </div>
+                    <div class="lesson">
+                        الدرس 3: قاعدة السلسلة
+                    </div>
+                    <div class="lesson">
+                        الدرس 4: الاشتقاق الضمني
+                    </div>
+                    <div class="lesson">
+                        الدرس 5: المعدلات المرتبطة
+                    </div>
+                    <div class="lesson">
+                        اختبار نهاية الوحدة
+                    </div>
+                </div>
+            </div>
+            <div class="unit">
+                <button class="unit-btn" onclick="toggleUnit(4)">
+                    الوحدة الرابعة
+                </button>
+                <div class="lesson-list" id="unit4">
+                    <div class="lesson">
+                        الدرس 1: الأعداد المركبة
+                    </div>
+                    <div class="lesson">
+                        الدرس 2: العمليات على الأعداد المركبة
+                    </div>
+                    <div class="lesson">
+                        الدرس 3: المحل الهندسي في المستوى المركب
+                    </div>
+                    <div class="lesson">
+                        اختبار نهاية الوحدة
+                    </div>
+                </div>
+            </div>
+        </aside>
+        <!-- عارض الكتاب -->
+        <section class="viewer">
+            <div class="viewer-head">
+                <strong>
+                    📘 كتاب الطالب — الفصل الدراسي الأول
+                </strong>
+                <div class="pdf-buttons">
+                    <a
+                        class="pdf-btn"
+                        href="Google(4).pdf"
+                        target="_blank"
+                    >
+                        فتح الكتاب كاملًا ↗
+                    </a>
+                    <button
+                        class="pdf-btn secondary"
+                        onclick="printBook()"
+                    >
+                        طباعة
+                    </button>
+                </div>
+            </div>
+            <iframe
+                id="bookFrame"
+                class="pdf-frame"
+                src="Google(4).pdf"
+                title="كتاب الرياضيات"
+            ></iframe>
+            <div class="notice">
+                <strong>ملاحظة:</strong>
+                إذا لم يظهر الكتاب داخل العارض، تأكدي أن ملف
+                <strong>Google(4).pdf</strong>
+                موجود في نفس مجلد
+                <strong>book.html</strong>.
+            </div>
+        </section>
+    </section>
+</main>
+<script>
+function toggleUnit(number) {
+    const selected = document.getElementById("unit" + number);
+    document.querySelectorAll(".lesson-list").forEach(list => {
+        if (list !== selected) {
+            list.classList.remove("show");
+        }
+    });
+    selected.classList.toggle("show");
+}
+function goBack() {
+    window.history.back();
+}
+function printBook() {
+    const frame = document.getElementById("bookFrame");
+    try {
+        frame.contentWindow.print();
+    } catch (error) {
+        window.open("Google(4).pdf", "_blank");
+    }
+}
+</script>
+</body>
+</html>

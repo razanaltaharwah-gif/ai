@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MathMind AI | إنشاء حساب طالبة</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase.js"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            color: #111;
+        }
+        .register-page {
+            min-height: 100vh;
+            background: radial-gradient(circle at 10% 20%, rgba(217,0,0,0.08), transparent 25%),
+                        radial-gradient(circle at 90% 80%, rgba(255,204,0,0.12), transparent 25%),
+                        #f5f5f5;
+        }
+        .main-header {
+            background: #111;
+            color: white;
+            padding: 18px 7%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 22px;
+            font-weight: bold;
+        }
+        .logo-symbol {
+            color: #ffcc00;
+            font-size: 30px;
+        }
+        .back-link {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .back-link:hover {
+            color: #ffcc00;
+        }
+        .register-container {
+            min-height: calc(100vh - 80px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            box-sizing: border-box;
+        }
+        .register-card {
+            width: 100%;
+            max-width: 500px;
+            background: white;
+            border-radius: 28px;
+            padding: 40px;
+            box-sizing: border-box;
+            box-shadow: 0 15px 45px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .register-icon {
+            width: 70px;
+            height: 70px;
+            background: #111;
+            color: #ffcc00;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 35px;
+            margin: 0 auto 20px;
+        }
+        .register-card h1 {
+            margin-bottom: 10px;
+            color: #111;
+        }
+        .register-description {
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 25px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+            text-align: right;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            font-size: 16px;
+            outline: none;
+            background: white;
+        }
+        .form-group input:focus, .form-group select:focus {
+            border-color: #d90000;
+        }
+        .register-button {
+            width: 100%;
+            border: none;
+            background: #d90000;
+            color: white;
+            padding: 16px;
+            border-radius: 13px;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .register-button:hover {
+            background: #b80000;
+        }
+        .message-box {
+            display: none;
+            margin-top: 15px;
+            padding: 13px;
+            border-radius: 12px;
+            font-weight: bold;
+            line-height: 1.6;
+        }
+        .message-box.error {
+            display: block;
+            background: #ffe7e7;
+            color: #a00000;
+        }
+        .message-box.success {
+            display: block;
+            background: #e7f7e7;
+            color: #176b17;
+        }
+        .code-display {
+            background: #fff8d8;
+            border: 2px dashed #f0c419;
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 15px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #b71c1c;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div class="register-page">
+    <header class="main-header">
+        <div class="logo">
+            <span class="logo-symbol">∫</span>
+            MathMind AI
+        </div>
+        <a href="login.html" class="back-link">← تسجيل الدخول</a>
+    </header>
+
+    <main class="register-container">
+        <section class="register-card">
+            <div class="register-icon">👩🏻‍🎓</div>
+            <h1>إنشاء حساب طالبة جديد</h1>
+            <p class="register-description">أدخلي بياناتكِ لنقوم بتوليد "كود خاص بكِ" تحتفظين به لتسجيل الدخول في كل مرة.</p>
+            
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="studentName">اسم الطالبة الرباعي أو الثلاثي</label>
+                    <input type="text" id="studentName" placeholder="مثال: رزان الطهراوي" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="gradeSelect">الصف الدراسي</label>
+                    <select id="gradeSelect" class="input" required>
+                        <option value="">اختر الصف الدراسي</option>
+                        <option value="1">الصف الأول الأساسي</option>
+                        <option value="2">الصف الثاني الأساسي</option>
+                        <option value="3">الصف الثالث الأساسي</option>
+                        <option value="4">الصف الرابع الأساسي</option>
+                        <option value="5">الصف الخامس الأساسي</option>
+                        <option value="6">الصف السادس الأساسي</option>
+                        <option value="7">الصف السابع الأساسي</option>
+                        <option value="8">الصف الثامن الأساسي</option>
+                        <option value="9">الصف التاسع</option>
+                        <option value="10">الصف العاشر</option>
+                        <option value="11">الأول الثانوي</option>
+                        <option value="12">الثاني الثانوي (التوجيهي)</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="register-button">إنشاء الحساب وتوليد الكود</button>
+            </form>
+
+            <div id="codeResultBox" class="code-display"></div>
+            <div id="registerMessage" class="message-box"></div>
+        </section>
+    </main>
+</div>
+
+<script>
+    document.getElementById("registerForm").addEventListener("submit", async function(event) {
+        event.preventDefault();
+        
+        const name = document.getElementById("studentName").value.trim();
+        const grade = document.getElementById("gradeSelect").value;
+        const msgBox = document.getElementById("registerMessage");
+        const codeBox = document.getElementById("codeResultBox");
+
+        msgBox.style.display = "none";
+        codeBox.style.display = "none";
+
+        if(!name || !grade){
+            msgBox.textContent = "الرجاء إدخال الاسم واختيار الصف.";
+            msgBox.className = "message-box error";
+            return;
+        }
+
+        if(typeof supabaseClient === "undefined"){
+            msgBox.textContent = "خطأ في الاتصال بقاعدة البيانات (Supabase).";
+            msgBox.className = "message-box error";
+            return;
+        }
+
+        // توليد كود فريد للطالبة مثلاً MM- مع 5 أرقام عشوائية
+        const randomDigits = Math.floor(10000 + Math.random() * 90000);
+        const studentCode = "MM-" + randomDigits;
+
+        try {
+            // حفظ البيانات في جدول students في Supabase
+            const { data, error } = await supabaseClient
+                .from("students")
+                .insert([
+                    { 
+                        name: name, 
+                        grade: grade, 
+                        student_code: studentCode 
+                    }
+                ]);
+
+            if(error){
+                console.error(error);
+                msgBox.textContent = "حدث خطأ أثناء حفظ البيانات: " + error.message;
+                msgBox.className = "message-box error";
+                return;
+            }
+
+            // عرض الكود للطالبة لتحتفظ به
+            codeBox.innerHTML = `كود الطالبة الخاص بكِ:<br><span style="font-size:24px; color:#111;">${studentCode}</span><br><span style="font-size:13px; font-weight:normal; color:#555;">احفظي هذا الكود جيداً، ستستخدمينه لدخول المنصة في كل مرة!</span>`;
+            codeBox.style.display = "block";
+
+            msgBox.textContent = "تم إنشاء الحساب بنجاح 🎉 سيتم توجيهكِ لصفحة الدخول خلال ثوانٍ...";
+            msgBox.className = "message-box success";
+
+            setTimeout(() => {
+                window.location.href = "login.html";
+            }, 6000);
+
+        } catch(err) {
+            console.error(err);
+            msgBox.textContent = "حدث خطأ غير متوقع.";
+            msgBox.className = "message-box error";
+        }
+    });
+</script>
+</body>
+</html>

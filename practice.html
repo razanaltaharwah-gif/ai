@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MathMind AI | التدريب</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+    body {
+      background: #f6f6f6;
+      color: #111;
+      min-height: 100vh;
+    }
+    header {
+      background: #111;
+      color: white;
+      padding: 18px 6%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      font-size: 23px;
+      font-weight: bold;
+    }
+    .logo span {
+      color: #ffd21c;
+    }
+    .back {
+      background: #ffd21c;
+      color: #111;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    main {
+      width: 90%;
+      max-width: 900px;
+      margin: 30px auto;
+    }
+    .welcome {
+      background: linear-gradient(135deg, #111, #292929);
+      color: white;
+      padding: 28px;
+      border-radius: 20px;
+      margin-bottom: 22px;
+    }
+    .welcome h1 {
+      margin-bottom: 8px;
+    }
+    .welcome span {
+      color: #ffd21c;
+    }
+    .question-card {
+      background: white;
+      padding: 28px;
+      border-radius: 20px;
+      box-shadow: 0 6px 22px rgba(0,0,0,0.07);
+      border-right: 5px solid #e53935;
+    }
+    .question-number {
+      display: inline-block;
+      background: #ffd21c;
+      padding: 7px 12px;
+      border-radius: 8px;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+    .question {
+      font-size: 22px;
+      line-height: 1.8;
+      margin-bottom: 22px;
+    }
+    .answer-input {
+      width: 100%;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 11px;
+      font-size: 17px;
+      margin-bottom: 12px;
+      outline: none;
+    }
+    .answer-input:focus {
+      border-color: #ffd21c;
+    }
+    .buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    button {
+      border: none;
+      padding: 12px 18px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .check {
+      background: #111;
+      color: white;
+    }
+    .hint {
+      background: #ffd21c;
+      color: #111;
+    }
+    .next {
+      background: #e53935;
+      color: white;
+    }
+    .hint-box,
+    .result-box {
+      margin-top: 18px;
+      padding: 15px;
+      border-radius: 12px;
+      line-height: 1.8;
+      display: none;
+    }
+    .hint-box {
+      background: #fff8d8;
+      border-right: 4px solid #ffd21c;
+    }
+    .result-box {
+      background: #f1f1f1;
+      border-right: 4px solid #111;
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 20px;
+    }
+    .stat {
+      background: white;
+      padding: 17px;
+      border-radius: 14px;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    }
+    .stat strong {
+      display: block;
+      font-size: 23px;
+      margin-bottom: 5px;
+    }
+    .finish {
+      background: white;
+      padding: 40px;
+      border-radius: 20px;
+      text-align: center;
+      box-shadow: 0 6px 22px rgba(0,0,0,0.07);
+      display: none;
+    }
+    .finish h2 {
+      margin-bottom: 12px;
+    }
+    @media (max-width: 600px) {
+      .question {
+        font-size: 19px;
+      }
+      .stats {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      ∫ <span>MathMind AI</span>
+    </div>
+    <button
+      class="back"
+      onclick="goStudent()">
+      لوحة الطالبة
+    </button>
+  </header>
+  <main>
+    <section class="welcome">
+      <h1>
+        وقت التدريب 🧠
+      </h1>
+      <p>
+        أهلاً <span id="studentName">...</span>،
+        فكّري أولًا وحاولي الوصول للحل بنفسك.
+      </p>
+    </section>
+    <section
+      class="question-card"
+      id="questionCard">
+      <div class="question-number">
+        السؤال <span id="questionNumber">1</span>
+      </div>
+      <div
+        class="question"
+        id="questionText">
+      </div>
+      <input
+        type="text"
+        id="answerInput"
+        class="answer-input"
+        placeholder="اكتبي إجابتك هنا..."
+      >
+      <div class="buttons">
+        <button
+          class="check"
+          onclick="checkAnswer()">
+          تحقق من إجابتي
+        </button>
+        <button
+          class="hint"
+          onclick="showHint()">
+          💡 أعطيني تلميح
+        </button>
+        <button
+          class="next"
+          id="nextButton"
+          onclick="nextQuestion()"
+          style="display:none;">
+          السؤال التالي
+        </button>
+      </div>
+      <div
+        class="hint-box"
+        id="hintBox">
+      </div>
+      <div
+        class="result-box"
+        id="resultBox">
+      </div>
+    </section>
+    <section class="stats">
+      <div class="stat">
+        <strong id="sessionSolved">
+          0
+        </strong>
+        أسئلة محلولة
+      </div>
+      <div class="stat">
+        <strong id="sessionCorrect">
+          0
+        </strong>
+        صحيحة
+      </div>
+      <div class="stat">
+        <strong id="sessionHints">
+          0
+        </strong>
+        تلميحات
+      </div>
+    </section>
+    <section
+      class="finish"
+      id="finishScreen">
+      <h2>
+        أحسنتِ! 🎉
+      </h2>
+      <p>
+        خلصتي مجموعة التدريب الحالية.
+      </p>
+      <br>
+      <button
+        class="check"
+        onclick="goStudent()">
+        العودة للوحة الطالبة
+      </button>
+    </section>
+  </main>
+  <script>
+    /* ==============================
+       🔐 حماية الصفحة
+    ============================== */
+    const currentStudentData =
+      localStorage.getItem(
+        "mathmindCurrentStudent"
+      );
+    if (!currentStudentData) {
+      window.location.replace("login.html");
+    }
+    let student;
+    try {
+      student =
+        JSON.parse(currentStudentData);
+    } catch (error) {
+      localStorage.removeItem(
+        "mathmindCurrentStudent"
+      );
+      window.location.replace("login.html");
+    }
+    document.getElementById(
+      "studentName"
+    ).textContent = student.name;
+    /* ==============================
+       الأسئلة التجريبية
+       لاحقًا نستبدلها بأسئلة الكتاب
+    ============================== */
+    const questions = [
+      {
+        text: "إذا كان  x + 7 = 15، فما قيمة x؟",
+        answer: "8",
+        hint: "حاولي عزل x. ما العملية العكسية للجمع؟"
+      },
+      {
+        text: "إذا كان  3x = 21، فما قيمة x؟",
+        answer: "7",
+        hint: "بما أن x مضروبة في 3، فكري بالعملية العكسية."
+      },
+      {
+        text: "إذا كان  x - 5 = 12، فما قيمة x؟",
+        answer: "17",
+        hint: "ما العملية التي تعكس طرح 5؟"
+      },
+      {
+        text: "إذا كان  2x + 4 = 14، فما قيمة x؟",
+        answer: "5",
+        hint: "ابدئي بإزالة العدد 4، ثم فكري بالمعامل الموجود أمام x."
+      }
+    ];
+    let currentQuestion = 0;
+    let sessionSolved = 0;
+    let sessionCorrect = 0;
+    let sessionHints = 0;
+    let currentHints = 0;
+    /* ==============================
+       عرض السؤال
+    ============================== */
+    function renderQuestion() {
+      const q =
+        questions[currentQuestion];
+      document.getElementById(
+        "questionNumber"
+      ).textContent =
+        currentQuestion + 1;
+      document.getElementById(
+        "questionText"
+      ).textContent =
+        q.text;
+      document.getElementById(
+        "answerInput"
+      ).value = "";
+      document.getElementById(
+        "hintBox"
+      ).style.display = "none";
+      document.getElementById(
+        "resultBox"
+      ).style.display = "none";
+      document.getElementById(
+        "nextButton"
+      ).style.display = "none";
+      currentHints = 0;
+    }
+    /* ==============================
+       التلميح
+    ============================== */
+    function showHint() {
+      const q =
+        questions[currentQuestion];
+      document.getElementById(
+        "hintBox"
+      ).textContent =
+        "💡 تلميح: " + q.hint;
+      document.getElementById(
+        "hintBox"
+      ).style.display =
+        "block";
+      currentHints++;
+      sessionHints++;
+      updateSessionStats();
+    }
+    /* ==============================
+       التحقق
+    ============================== */
+    function checkAnswer() {
+      const input =
+        document
+          .getElementById("answerInput")
+          .value
+          .trim();
+      if (!input) {
+        alert("اكتبي إجابتك أولًا 🙂");
+        return;
+      }
+      const q =
+        questions[currentQuestion];
+      const isCorrect =
+        input === q.answer;
+      sessionSolved++;
+      if (isCorrect) {
+        sessionCorrect++;
+        document.getElementById(
+          "resultBox"
+        ).innerHTML =
+          "✅ ممتاز! إجابتك صحيحة. حاولي التفكير كيف وصلتي إليها.";
+      } else {
+        document.getElementById(
+          "resultBox"
+        ).innerHTML =
+          "❌ الإجابة غير صحيحة حاليًا. لا تقلقي؛ استخدمي التلميح وحاولي مرة أخرى.";
+      }
+      document.getElementById(
+        "resultBox"
+      ).style.display =
+        "block";
+      document.getElementById(
+        "nextButton"
+      ).style.display =
+        "inline-block";
+      updateStudentData(isCorrect);
+      updateSessionStats();
+    }
+    /* ==============================
+       حفظ البيانات
+    ============================== */
+    function updateStudentData(isCorrect) {
+      const students =
+        JSON.parse(
+          localStorage.getItem(
+            "mathmindStudents"
+          )
+        ) || [];
+      const index =
+        students.findIndex(
+          item =>
+            String(item.id) ===
+            String(student.id)
+        );
+      if (index === -1) {
+        return;
+      }
+      if (!students[index].progress) {
+        students[index].progress = {
+          questionsSolved: 0,
+          correctAnswers: 0,
+          wrongAnswers: 0,
+          attempts: 0,
+          hintsUsed: 0
+        };
+      }
+      students[index].progress.questionsSolved++;
+      students[index].progress.attempts++;
+      if (isCorrect) {
+        students[index].progress.correctAnswers++;
+      } else {
+        students[index].progress.wrongAnswers++;
+      }
+      students[index].progress.hintsUsed +=
+        currentHints;
+      if (!students[index].performance) {
+        students[index].performance = [];
+      }
+      students[index].performance.push({
+        type: "practice_question",
+        questionNumber:
+          currentQuestion + 1,
+        correct:
+          isCorrect,
+        hintsUsed:
+          currentHints,
+        date:
+          new Date().toLocaleString("ar-JO")
+      });
+      localStorage.setItem(
+        "mathmindStudents",
+        JSON.stringify(students)
+      );
+      student =
+        students[index];
+      localStorage.setItem(
+        "mathmindCurrentStudent",
+        JSON.stringify(student)
+      );
+    }
+    /* ==============================
+       السؤال التالي
+    ============================== */
+    function nextQuestion() {
+      currentQuestion++;
+      if (
+        currentQuestion >=
+        questions.length
+      ) {
+        document.getElementById(
+          "questionCard"
+        ).style.display =
+          "none";
+        document.getElementById(
+          "finishScreen"
+        ).style.display =
+          "block";
+        return;
+      }
+      renderQuestion();
+    }
+    /* ==============================
+       إحصائيات الجلسة
+    ============================== */
+    function updateSessionStats() {
+      document.getElementById(
+        "sessionSolved"
+      ).textContent =
+        sessionSolved;
+      document.getElementById(
+        "sessionCorrect"
+      ).textContent =
+        sessionCorrect;
+      document.getElementById(
+        "sessionHints"
+      ).textContent =
+        sessionHints;
+    }
+    /* ==============================
+       العودة
+    ============================== */
+    function goStudent() {
+      window.location.href =
+        "student.html";
+    }
+    renderQuestion();
+  </script>
+</body>
+</html>

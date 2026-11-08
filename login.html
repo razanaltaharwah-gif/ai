@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MathMind AI | تسجيل الدخول</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            color: #111;
+        }
+        .login-page {
+            min-height: 100vh;
+            background:
+                radial-gradient(circle at 10% 20%, rgba(217,0,0,0.08), transparent 25%),
+                radial-gradient(circle at 90% 80%, rgba(255,204,0,0.12), transparent 25%),
+                #f5f5f5;
+        }
+        /* ================= HEADER ================= */
+        .main-header {
+            background: #111;
+            color: white;
+            padding: 18px 7%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 22px;
+            font-weight: bold;
+        }
+        .logo-symbol {
+            color: #ffcc00;
+            font-size: 30px;
+        }
+        .back-link {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .back-link:hover {
+            color: #ffcc00;
+        }
+        /* ================= CONTAINER ================= */
+        .login-container {
+            min-height: calc(100vh - 80px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 50px 20px;
+            box-sizing: border-box;
+        }
+        .login-card {
+            width: 100%;
+            max-width: 500px;
+            background: white;
+            border-radius: 28px;
+            padding: 40px;
+            box-sizing: border-box;
+            box-shadow: 0 15px 45px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        .login-card::before {
+            content: "∑  π  √x  Δ  ∞";
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            color: rgba(217,0,0,0.08);
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .login-icon {
+            width: 70px;
+            height: 70px;
+            background: #111;
+            color: #ffcc00;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 35px;
+            margin: 0 auto 20px;
+        }
+        .login-card h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            color: #111;
+        }
+        .login-description {
+            text-align: center;
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 30px;
+        }
+        /* ================= ROLE ================= */
+        .role-title {
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+        .role-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+        .role-button {
+            border: 2px solid #ddd;
+            background: white;
+            padding: 15px;
+            border-radius: 14px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .role-button.active {
+            border-color: #d90000;
+            background: #fff1f1;
+            color: #d90000;
+        }
+        .role-button:hover {
+            border-color: #d90000;
+        }
+        /* ================= FORM ================= */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        .form-group input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            font-size: 16px;
+            outline: none;
+        }
+        .form-group input:focus {
+            border-color: #d90000;
+        }
+        .login-button {
+            width: 100%;
+            border: none;
+            background: #d90000;
+            color: white;
+            padding: 16px;
+            border-radius: 13px;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .login-button:hover {
+            background: #b80000;
+        }
+        .login-message {
+            display: none;
+            margin-top: 15px;
+            padding: 13px;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .login-message.error {
+            display: block;
+            background: #ffe7e7;
+            color: #a00000;
+        }
+        .login-message.success {
+            display: block;
+            background: #e7f7e7;
+            color: #176b17;
+        }
+        /* ================= REGISTER ================= */
+        .register-link-box {
+            margin-top: 22px;
+            padding: 17px;
+            background: #fff8d8;
+            border-radius: 14px;
+            text-align: center;
+            line-height: 1.8;
+        }
+        .register-link-box a {
+            color: #d90000;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        .teacher-note {
+            margin-top: 15px;
+            font-size: 13px;
+            color: #777;
+            text-align: center;
+            line-height: 1.7;
+        }
+        @media (max-width: 600px) {
+            .login-card {
+                padding: 28px 20px;
+            }
+            .main-header {
+                padding: 15px 5%;
+            }
+            .role-buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="login-page">
+    <!-- HEADER -->
+    <header class="main-header">
+        <div class="logo">
+            <span class="logo-symbol">∫</span>
+            MathMind AI
+        </div>
+        <a
+            href="index.html"
+            class="back-link">
+            ← الرئيسية
+        </a>
+    </header>
+    <!-- LOGIN -->
+    <main class="login-container">
+        <section class="login-card">
+            <div class="login-icon">
+                ∫
+            </div>
+            <h1>
+                تسجيل الدخول
+            </h1>
+            <p class="login-description">
+                اختاري نوع الحساب للدخول إلى MathMind AI.
+            </p>
+            <!-- ROLE -->
+            <div class="role-title">
+                نوع الحساب
+            </div>
+            <div class="role-buttons">
+                <button
+                    type="button"
+                    class="role-button active"
+                    id="studentRole"
+                    onclick="selectRole('student')">
+                    👩🏻‍🎓 طالبة
+                </button>
+                <button
+                    type="button"
+                    class="role-button"
+                    id="teacherRole"
+                    onclick="selectRole('teacher')">
+                    👩🏻‍🏫 معلمة
+                </button>
+            </div>
+            <!-- FORM -->
+            <form id="loginForm">
+                <div
+                    class="form-group"
+                    id="studentNumberGroup">
+                    <label for="studentNumber">
+                        رقم الطالبة
+                    </label>
+                    <input
+                        type="text"
+                        id="studentNumber"
+                        placeholder="مثال: 482731"
+                        inputmode="numeric">
+                </div>
+                <div
+                    class="form-group"
+                    id="loginCodeGroup">
+                    <label for="loginCode">
+                        رمز الدخول
+                    </label>
+                    <input
+                        type="password"
+                        id="loginCode"
+                        placeholder="أدخلي رمز الدخول"
+                        inputmode="numeric">
+                </div>
+                <div
+                    class="form-group"
+                    id="teacherUsernameGroup"
+                    style="display:none;">
+                    <label for="teacherUsername">
+                        اسم المستخدم
+                    </label>
+                    <input
+                        type="text"
+                        id="teacherUsername"
+                        placeholder="teacher">
+                </div>
+                <div
+                    class="form-group"
+                    id="teacherPasswordGroup"
+                    style="display:none;">
+                    <label for="teacherPassword">
+                        كلمة المرور
+                    </label>
+                    <input
+                        type="password"
+                        id="teacherPassword"
+                        placeholder="كلمة المرور">
+                </div>
+                <button
+                    type="submit"
+                    class="login-button">
+                    دخول
+                </button>
+            </form>
+            <div
+                id="loginMessage"
+                class="login-message">
+            </div>
+            <!-- REGISTER -->
+            <div
+                class="register-link-box"
+                id="studentRegisterBox">
+                أول مرة تستخدمين المنصة؟
+                <br>
+                <a href="student-register.html">
+                    إنشاء حساب طالبة
+                </a>
+            </div>
+            <div class="teacher-note">
+                حساب المعلمة في هذه النسخة تجريبي،
+                وسنربطه لاحقاً بحساب حقيقي وقاعدة بيانات.
+            </div>
+        </section>
+    </main>
+</div>
+<script>
+    /* =====================================
+       الدور الحالي
+    ===================================== */
+    let selectedRole = "student";
+    /* =====================================
+       اختيار الدور
+    ===================================== */
+    function selectRole(role) {
+        selectedRole = role;
+        const studentRole =
+            document.getElementById("studentRole");
+        const teacherRole =
+            document.getElementById("teacherRole");
+        const studentNumberGroup =
+            document.getElementById("studentNumberGroup");
+        const loginCodeGroup =
+            document.getElementById("loginCodeGroup");
+        const teacherUsernameGroup =
+            document.getElementById("teacherUsernameGroup");
+        const teacherPasswordGroup =
+            document.getElementById("teacherPasswordGroup");
+        const registerBox =
+            document.getElementById("studentRegisterBox");
+        if (role === "student") {
+            studentRole.classList.add("active");
+            teacherRole.classList.remove("active");
+            studentNumberGroup.style.display =
+                "block";
+            loginCodeGroup.style.display =
+                "block";
+            teacherUsernameGroup.style.display =
+                "none";
+            teacherPasswordGroup.style.display =
+                "none";
+            registerBox.style.display =
+                "block";
+        } else {
+            teacherRole.classList.add("active");
+            studentRole.classList.remove("active");
+            studentNumberGroup.style.display =
+                "none";
+            loginCodeGroup.style.display =
+                "none";
+            teacherUsernameGroup.style.display =
+                "block";
+            teacherPasswordGroup.style.display =
+                "block";
+            registerBox.style.display =
+                "none";
+        }
+        clearMessage();
+    }
+    /* =====================================
+       الرسائل
+    ===================================== */
+    function showMessage(message, type) {
+        const box =
+            document.getElementById("loginMessage");
+        box.textContent =
+            message;
+        box.className =
+            "login-message " + type;
+    }
+    function clearMessage() {
+        const box =
+            document.getElementById("loginMessage");
+        box.textContent =
+            "";
+        box.className =
+            "login-message";
+    }
+    /* =====================================
+       تسجيل الدخول
+    ===================================== */
+    document
+        .getElementById("loginForm")
+        .addEventListener("submit", function(event) {
+            event.preventDefault();
+            /* =========================
+               دخول الطالبة
+            ========================= */
+            if (selectedRole === "student") {
+                const studentNumber =
+                    document
+                        .getElementById("studentNumber")
+                        .value
+                        .trim();
+                const loginCode =
+                    document
+                        .getElementById("loginCode")
+                        .value
+                        .trim();
+                if (!studentNumber || !loginCode) {
+                    showMessage(
+                        "أدخلي رقم الطالبة ورمز الدخول.",
+                        "error"
+                    );
+                    return;
+                }
+                const students =
+                    JSON.parse(
+                        localStorage.getItem("mathmindStudents")
+                    ) || [];
+                const student =
+                    students.find(
+                        item =>
+                            String(item.studentNumber) ===
+                                String(studentNumber)
+                            &&
+                            String(item.loginCode) ===
+                                String(loginCode)
+                    );
+                if (!student) {
+                    showMessage(
+                        "رقم الطالبة أو رمز الدخول غير صحيح.",
+                        "error"
+                    );
+                    return;
+                }
+                /*
+                   نحفظ الطالبة الحالية
+                */
+                localStorage.setItem(
+                    "mathmindCurrentStudent",
+                    JSON.stringify(student)
+                );
+                localStorage.setItem(
+                    "mathmindLoggedIn",
+                    "true"
+                );
+                showMessage(
+                    "تم تسجيل الدخول بنجاح 👏",
+                    "success"
+                );
+                setTimeout(function() {
+                    window.location.href =
+                        "student.html";
+                }, 500);
+            }
+            /* =========================
+               دخول المعلمة
+            ========================= */
+            else {
+                const username =
+                    document
+                        .getElementById("teacherUsername")
+                        .value
+                        .trim();
+                const password =
+                    document
+                        .getElementById("teacherPassword")
+                        .value
+                        .trim();
+                /*
+                   بيانات تجريبية فقط حالياً.
+                   سنغيرها لاحقاً عندما نبني
+                   حساب المعلمة الحقيقي.
+                */
+                if (
+                    username === "teacher" &&
+                    password === "1234"
+                ) {
+                    localStorage.setItem(
+                        "mathmindTeacherLoggedIn",
+                        "true"
+                    );
+                    showMessage(
+                        "تم تسجيل الدخول بنجاح 👩🏻‍🏫",
+                        "success"
+                    );
+                    setTimeout(function() {
+                        window.location.href =
+                            "teacher.html";
+                    }, 500);
+                } else {
+                    showMessage(
+                        "بيانات المعلمة التجريبية غير صحيحة.",
+                        "error"
+                    );
+                }
+            }
+        });
+</script>
+</body>
+</html>

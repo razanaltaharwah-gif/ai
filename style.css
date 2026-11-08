@@ -1,0 +1,398 @@
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    direction:rtl;
+    font-family:Arial, "Tajawal", sans-serif;
+    color:#222;
+    min-height:100vh;
+    background:
+        linear-gradient(135deg, rgba(255,224,102,.9), rgba(255,245,190,.92) 42%, rgba(255,210,210,.9)),
+        #fff4b8;
+    position:relative;
+    overflow-x:hidden;
+}
+
+/* شبكة رياضيات خفيفة */
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    opacity:.13;
+    background-image:
+        linear-gradient(rgba(180,30,30,.35) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(180,30,30,.35) 1px, transparent 1px);
+    background-size:45px 45px;
+    z-index:-1;
+}
+
+.container{
+    width:min(1120px, 92%);
+    margin:auto;
+}
+
+/* ================= HEADER ================= */
+
+.header{
+    padding:24px 0 10px;
+}
+
+.header-box{
+    background:rgba(255,255,255,.9);
+    border:1px solid rgba(185,28,28,.12);
+    border-radius:22px;
+    padding:15px 22px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    box-shadow:0 8px 25px rgba(120,20,20,.08);
+    backdrop-filter:blur(8px);
+}
+
+.logo{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.logo-icon{
+    width:48px;
+    height:48px;
+    border-radius:15px;
+    background:linear-gradient(135deg,#b91c1c,#ef4444);
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:27px;
+    font-weight:bold;
+    box-shadow:0 7px 18px rgba(185,28,28,.25);
+}
+
+.logo-text{
+    font-size:22px;
+    font-weight:800;
+    color:#8f1616;
+}
+
+.header-badge{
+    background:#fff4c2;
+    color:#8f1616;
+    border:1px solid #f1cf55;
+    padding:9px 15px;
+    border-radius:30px;
+    font-size:13px;
+    font-weight:bold;
+}
+
+/* ================= HERO ================= */
+
+.hero{
+    text-align:center;
+    padding:55px 0 35px;
+}
+
+.hero h1{
+    font-size:clamp(34px,5vw,58px);
+    line-height:1.2;
+    color:#8f1616;
+    margin-bottom:18px;
+    font-weight:900;
+}
+
+.hero h1 span{
+    color:#d89a00;
+}
+
+.hero p{
+    max-width:720px;
+    margin:auto;
+    color:#555;
+    font-size:18px;
+    line-height:1.9;
+}
+
+/* ================= SECTIONS ================= */
+
+.section{
+    padding:30px 0;
+}
+
+.section-heading{
+    text-align:center;
+    margin-bottom:25px;
+}
+
+.section-heading h2{
+    color:#8f1616;
+    font-size:30px;
+    margin-bottom:8px;
+}
+
+.section-heading p{
+    color:#666;
+    font-size:15px;
+}
+
+/* ================= CARDS ================= */
+
+.cards{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:20px;
+}
+
+.card{
+    background:rgba(255,255,255,.94);
+    border:1px solid rgba(185,28,28,.1);
+    border-radius:22px;
+    padding:26px;
+    box-shadow:0 8px 25px rgba(90,20,20,.08);
+    transition:.25s ease;
+}
+
+.card:hover{
+    transform:translateY(-5px);
+    box-shadow:0 14px 32px rgba(90,20,20,.14);
+}
+
+.card-icon{
+    width:58px;
+    height:58px;
+    border-radius:17px;
+    background:#fff0a8;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:28px;
+    margin-bottom:18px;
+}
+
+.card h3{
+    color:#8f1616;
+    font-size:20px;
+    margin-bottom:10px;
+}
+
+.card p{
+    color:#666;
+    line-height:1.8;
+    font-size:14px;
+}
+
+/* ================= ACCESS CARDS ================= */
+
+.access-card{
+    display:flex;
+    flex-direction:column;
+    min-height:250px;
+}
+
+.access-card .btn{
+    margin-top:auto;
+}
+
+/* ================= BUTTONS ================= */
+
+.btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    text-decoration:none;
+    border:none;
+    cursor:pointer;
+    padding:13px 20px;
+    border-radius:13px;
+    font-family:inherit;
+    font-size:15px;
+    font-weight:bold;
+    transition:.2s ease;
+}
+
+.btn-primary{
+    background:linear-gradient(135deg,#b91c1c,#e33a3a);
+    color:white;
+    box-shadow:0 7px 18px rgba(185,28,28,.2);
+}
+
+.btn-primary:hover{
+    transform:translateY(-2px);
+}
+
+.btn-yellow{
+    background:linear-gradient(135deg,#eab308,#facc15);
+    color:#5f4500;
+}
+
+.btn-light{
+    background:#fff;
+    color:#8f1616;
+    border:1px solid #ead7d7;
+}
+
+.full-btn{
+    width:100%;
+}
+
+/* ================= CONTENT BOX ================= */
+
+.content-box{
+    background:rgba(255,255,255,.94);
+    border-radius:22px;
+    padding:28px;
+    box-shadow:0 8px 25px rgba(90,20,20,.08);
+    border:1px solid rgba(185,28,28,.1);
+}
+
+.input-group{
+    margin-bottom:18px;
+}
+
+.input-group label{
+    display:block;
+    margin-bottom:8px;
+    color:#8f1616;
+    font-weight:bold;
+}
+
+.input{
+    width:100%;
+    padding:14px 16px;
+    border:1px solid #ddd;
+    border-radius:13px;
+    font-family:inherit;
+    font-size:15px;
+    outline:none;
+    background:#fff;
+}
+
+.input:focus{
+    border-color:#d33;
+    box-shadow:0 0 0 3px rgba(185,28,28,.08);
+}
+
+/* ================= رحلة الطالبة ================= */
+
+.journey-card{
+    border-top:5px solid #b91c1c;
+    background:
+        linear-gradient(145deg,rgba(255,247,244,.98),rgba(255,255,255,.98));
+    position:relative;
+    overflow:hidden;
+}
+
+.journey-card::after{
+    content:"";
+    position:absolute;
+    width:95px;
+    height:95px;
+    border-radius:50%;
+    background:rgba(185,28,28,.07);
+    left:-30px;
+    bottom:-35px;
+}
+
+.journey-card .card-icon{
+    background:linear-gradient(135deg,#b91c1c,#ef4444);
+    color:white;
+    box-shadow:0 7px 18px rgba(185,28,28,.18);
+}
+
+.journey-card h3{
+    color:#991b1b;
+}
+
+.journey-card:hover{
+    border-top-color:#8f1616;
+    box-shadow:0 14px 32px rgba(185,28,28,.18);
+    transform:translateY(-5px);
+}
+
+/* ================= HOW IT WORKS ================= */
+
+.how-card{
+    background:rgba(255,255,255,.9);
+}
+
+.how-card .card-icon{
+    background:#fff1a8;
+}
+
+/* ================= FOOTER ================= */
+
+.footer{
+    text-align:center;
+    padding:40px 0 25px;
+    color:#777;
+    font-size:13px;
+}
+
+.footer strong{
+    color:#8f1616;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media(max-width:850px){
+
+    .cards{
+        grid-template-columns:1fr;
+    }
+
+    .hero{
+        padding:40px 0 25px;
+    }
+
+    .hero h1{
+        font-size:38px;
+    }
+
+    .hero p{
+        font-size:16px;
+    }
+
+    .header-box{
+        padding:13px 15px;
+    }
+
+    .header-badge{
+        display:none;
+    }
+}
+
+@media(max-width:500px){
+
+    .container{
+        width:94%;
+    }
+
+    .card{
+        padding:22px;
+    }
+
+    .hero h1{
+        font-size:32px;
+    }
+
+    .section-heading h2{
+        font-size:26px;
+    }
+
+    .logo-text{
+        font-size:19px;
+    }
+
+    .logo-icon{
+        width:43px;
+        height:43px;
+        font-size:24px;
+    }
+}

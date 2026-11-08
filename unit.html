@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الوحدات | MathMind AI</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: Arial, Tahoma, sans-serif;
+            background: #f7f7f7;
+            color: #171717;
+            min-height: 100vh;
+        }
+        /* Header */
+        header {
+            background: #151515;
+            color: white;
+            padding: 18px 7%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            border-bottom: 4px solid #e63946;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .logo span {
+            color: #ffd60a;
+        }
+        .back-btn {
+            text-decoration: none;
+            color: white;
+            background: #e63946;
+            padding: 10px 18px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+        /* Hero */
+        .hero {
+            background: linear-gradient(135deg, #171717, #292929);
+            color: white;
+            padding: 45px 7%;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: "∑   π   √x   ∆   f(x)   ∞";
+            position: absolute;
+            font-size: 45px;
+            color: rgba(255, 214, 10, 0.08);
+            top: 20px;
+            left: 5%;
+            white-space: nowrap;
+        }
+        .hero h1 {
+            font-size: 38px;
+            margin-bottom: 12px;
+            position: relative;
+        }
+        .hero h1 span {
+            color: #ffd60a;
+        }
+        .hero p {
+            font-size: 18px;
+            color: #dddddd;
+            position: relative;
+        }
+        .student-name {
+            margin-top: 18px;
+            display: inline-block;
+            background: rgba(230, 57, 70, 0.18);
+            border: 1px solid rgba(230, 57, 70, 0.5);
+            padding: 10px 16px;
+            border-radius: 10px;
+            position: relative;
+        }
+        /* Main */
+        main {
+            width: 86%;
+            max-width: 1200px;
+            margin: 35px auto 60px;
+        }
+        .section-title {
+            margin-bottom: 22px;
+        }
+        .section-title h2 {
+            font-size: 28px;
+            margin-bottom: 7px;
+        }
+        .section-title p {
+            color: #666;
+        }
+        /* Units */
+        .units-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 22px;
+        }
+        .unit-card {
+            background: white;
+            border: 1px solid #e4e4e4;
+            border-radius: 18px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+            transition: 0.25s;
+            position: relative;
+            overflow: hidden;
+        }
+        .unit-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 14px 30px rgba(0,0,0,0.10);
+        }
+        .unit-number {
+            position: absolute;
+            left: 18px;
+            top: 15px;
+            font-size: 50px;
+            font-weight: bold;
+            color: rgba(230, 57, 70, 0.08);
+        }
+        .unit-icon {
+            width: 52px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #fff3b0;
+            border-radius: 14px;
+            font-size: 27px;
+            margin-bottom: 17px;
+        }
+        .unit-card h3 {
+            font-size: 22px;
+            margin-bottom: 9px;
+        }
+        .unit-card > p {
+            color: #666;
+            line-height: 1.7;
+            margin-bottom: 18px;
+        }
+        .lessons {
+            display: grid;
+            gap: 9px;
+            margin-bottom: 20px;
+        }
+        .lesson {
+            background: #f7f7f7;
+            border-right: 4px solid #e63946;
+            padding: 11px 13px;
+            border-radius: 8px;
+            color: #333;
+            font-size: 14px;
+        }
+        .unit-btn {
+            display: block;
+            text-align: center;
+            text-decoration: none;
+            background: #e63946;
+            color: white;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+        .unit-btn:hover {
+            background: #c92f3b;
+        }
+        /* Notice */
+        .notice {
+            margin-top: 28px;
+            background: #171717;
+            color: white;
+            border-radius: 16px;
+            padding: 22px;
+            border-right: 6px solid #ffd60a;
+        }
+        .notice h3 {
+            color: #ffd60a;
+            margin-bottom: 8px;
+        }
+        .notice p {
+            line-height: 1.8;
+            color: #dddddd;
+        }
+        /* Mobile */
+        @media (max-width: 750px) {
+            header {
+                padding: 15px 5%;
+            }
+            .logo {
+                font-size: 20px;
+            }
+            .back-btn {
+                padding: 8px 12px;
+                font-size: 13px;
+            }
+            .hero {
+                padding: 35px 6%;
+            }
+            .hero h1 {
+                font-size: 29px;
+            }
+            .hero p {
+                font-size: 15px;
+            }
+            main {
+                width: 90%;
+            }
+            .units-grid {
+                grid-template-columns: 1fr;
+            }
+            .section-title h2 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="logo">
+            ∫ <span>MathMind</span> AI
+        </div>
+        <a href="student.html" class="back-btn">
+            ← لوحة الطالبة
+        </a>
+    </header>
+    <!-- Hero -->
+    <section class="hero">
+        <h1>
+            وحدات <span>الرياضيات</span>
+        </h1>
+        <p>
+            اختاري الوحدة التي تريدين التدرّب عليها وابدئي التفكير.
+        </p>
+        <div class="student-name">
+            👩‍🎓 الطالبة: <strong id="studentName">...</strong>
+        </div>
+    </section>
+    <!-- Main -->
+    <main>
+        <div class="section-title">
+            <h2>📚 الوحدات التعليمية</h2>
+            <p>
+                كل وحدة ستحتوي لاحقًا على دروس وأسئلة مطابقة لأفكار أسئلة الكتاب.
+            </p>
+        </div>
+        <div class="units-grid">
+            <!-- Unit 1 -->
+            <div class="unit-card">
+                <div class="unit-number">01</div>
+                <div class="unit-icon">
+                    ∫
+                </div>
+                <h3>التفاضل والتكامل</h3>
+                <p>
+                    مفاهيم وقوانين التفاضل والتكامل وتطبيقاتها.
+                </p>
+                <div class="lessons">
+                    <div class="lesson">الدرس 1 — سيتم إضافة المحتوى</div>
+                    <div class="lesson">الدرس 2 — سيتم إضافة المحتوى</div>
+                    <div class="lesson">الدرس 3 — سيتم إضافة المحتوى</div>
+                </div>
+                <a href="#" class="unit-btn">
+                    دخول الوحدة
+                </a>
+            </div>
+            <!-- Unit 2 -->
+            <div class="unit-card">
+                <div class="unit-number">02</div>
+                <div class="unit-icon">
+                    x²
+                </div>
+                <h3>الجبر والمعادلات</h3>
+                <p>
+                    المعادلات والتعبيرات الجبرية والمهارات المرتبطة بها.
+                </p>
+                <div class="lessons">
+                    <div class="lesson">الدرس 1 — سيتم إضافة المحتوى</div>
+                    <div class="lesson">الدرس 2 — سيتم إضافة المحتوى</div>
+                    <div class="lesson">الدرس 3 — سيتم إضافة المحتوى</div>
+                </div>
+                <a href="#" class="unit-btn">
+                    دخول الوحدة
+                </a>
+            </div>
+            <!-- Unit 3 -->
+            <div class="unit-card">
+                <div class="unit-number">03</div>
+                <div class="unit-icon">
+                    △
+                </div>
+                <h3>الهندسة</h3>
+                <p>
+                    المفاهيم الهندسية والقوانين والتطبيقات الرياضية.
+                </p>
+                <div class="lessons">
+                    <div class="lesson">الدرس 1 — سيتم إضافة المحتوى</div>
+                    <div class="lesson">الدرس 2 — سيتم إضافة المحتوى</div>
+                    <div class="lesson">الدرس 3 — سيتم إضافة المحتوى</div>
+                </div>
+                <a href="#" class="unit-btn">
+                    دخول الوحدة
+                </a>
+            </div>
+            <!-- Unit 4 -->
+            <div class="unit-card">
+                <div class="unit-number">04</div>
+                <div class="unit-icon">
+                    σ
+                </div>
+                <h3>الاحتمالات والإحصاء</h3>
+                <p>
+                    قراءة البيانات والاحتمالات والمفاهيم الإحصائية.
+                </p>
+                <div class="lessons">
+                    <div class="lesson">الدرس 1 — سيتم إضافة المحتوى</div>
+                    <div class="lesson">الدرس 2 — سيتم إضافة المحتوى</div>
+                    <div class="lesson">الدرس 3 — سيتم إضافة المحتوى</div>
+                </div>
+                <a href="#" class="unit-btn">
+                    دخول الوحدة
+                </a>
+            </div>
+        </div>
+        <!-- Notice -->
+        <div class="notice">
+            <h3>💡 ملاحظة مهمة</h3>
+            <p>
+                هذه الوحدات حاليًا عبارة عن هيكل مبدئي للمنصة.
+                عندما نضيف كتاب الرياضيات وأسئلة الكتاب وحلولها النموذجية،
+                سنستبدل هذه البيانات بالمحتوى الحقيقي للمنهاج،
+                ونربط التدريب بأفكار أسئلة الكتاب مع تغيير الأرقام فقط.
+            </p>
+        </div>
+    </main>
+    <script>
+        // حماية الصفحة
+        const currentStudentData =
+            localStorage.getItem("mathmindCurrentStudent");
+        if (!currentStudentData) {
+            window.location.replace("login.html");
+        } else {
+            const student =
+                JSON.parse(currentStudentData);
+            document.getElementById("studentName").textContent =
+                student.name || "الطالبة";
+        }
+    </script>
+</body>
+</html>

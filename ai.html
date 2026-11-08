@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MathMind AI | مساعد الرياضيات</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: Tahoma, Arial, sans-serif;
+            min-height: 100vh;
+            color: #2d2020;
+            background:
+                linear-gradient(135deg, rgba(250,204,21,.14), rgba(185,28,28,.07)),
+                #fffaf1;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            opacity: .14;
+            background-image:
+                linear-gradient(rgba(185,28,28,.08) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(185,28,28,.08) 1px, transparent 1px);
+            background-size: 34px 34px;
+        }
+        .top-line {
+            height: 5px;
+            background: linear-gradient(90deg, #991b1b, #ef4444, #facc15);
+        }
+        header {
+            background: rgba(255,255,255,.95);
+            border-bottom: 1px solid #ead8bd;
+            padding: 15px 5%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            backdrop-filter: blur(12px);
+        }
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .logo {
+            width: 48px;
+            height: 48px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #991b1b, #ef4444);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 27px;
+            font-weight: bold;
+        }
+        .brand h1 {
+            color: #991b1b;
+            font-size: 19px;
+        }
+        .brand p {
+            color: #847272;
+            font-size: 11px;
+            margin-top: 3px;
+        }
+        .back {
+            border: 1px solid #ead477;
+            background: #fff5d8;
+            color: #735100;
+            padding: 9px 15px;
+            border-radius: 11px;
+            font-family: inherit;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        main {
+            width: min(1050px, 94%);
+            margin: 28px auto 50px;
+        }
+        .hero {
+            background: linear-gradient(135deg, #991b1b, #dc2626 60%, #f59e0b);
+            color: white;
+            border-radius: 28px;
+            padding: 35px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 18px 45px rgba(153,27,27,.2);
+        }
+        .hero::after {
+            content: "∫  π  Σ  √  f(x)";
+            position: absolute;
+            left: 25px;
+            bottom: 8px;
+            font-size: 45px;
+            letter-spacing: 10px;
+            opacity: .08;
+        }
+        .hero h2 {
+            font-size: 31px;
+            margin-bottom: 10px;
+        }
+        .hero p {
+            line-height: 1.9;
+            font-size: 14px;
+            max-width: 700px;
+            color: rgba(255,255,255,.94);
+        }
+        .ai-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            margin-top: 17px;
+            background: rgba(255,255,255,.13);
+            border: 1px solid rgba(255,255,255,.25);
+            padding: 8px 13px;
+            border-radius: 30px;
+            font-size: 11px;
+        }
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #facc15;
+        }
+        .workspace {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 18px;
+            margin-top: 20px;
+        }
+        .panel {
+            background: rgba(255,255,255,.96);
+            border: 1px solid #ead8bd;
+            border-radius: 22px;
+            box-shadow: 0 10px 28px rgba(77,42,0,.07);
+        }
+        .context {
+            padding: 20px;
+            height: fit-content;
+        }
+        .context h3 {
+            color: #4a2b2b;
+            font-size: 16px;
+            margin-bottom: 16px;
+        }
+        .context-box {
+            background: #fff8e8;
+            border: 1px solid #ead9b9;
+            border-radius: 13px;
+            padding: 13px;
+            margin-bottom: 10px;
+        }
+        .context-box span {
+            display: block;
+            color: #917b70;
+            font-size: 10px;
+            margin-bottom: 5px;
+        }
+        .context-box strong {
+            color: #4b3030;
+            font-size: 12px;
+            line-height: 1.7;
+        }
+        .rules {
+            margin-top: 15px;
+            padding: 13px;
+            border-radius: 13px;
+            background: #fff1f1;
+            border: 1px solid #f0caca;
+        }
+        .rules h4 {
+            color: #991b1b;
+            font-size: 12px;
+            margin-bottom: 7px;
+        }
+        .rules p {
+            color: #755f5f;
+            font-size: 10px;
+            line-height: 1.8;
+        }
+        .chat {
+            min-height: 590px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .chat-head {
+            padding: 17px 20px;
+            border-bottom: 1px solid #eadfce;
+            background: #fffaf2;
+            display: flex;
+            align-items: center;
+            gap: 11px;
+        }
+        .ai-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 13px;
+            background: #991b1b;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 21px;
+        }
+        .chat-head strong {
+            color: #432828;
+            font-size: 14px;
+        }
+        .chat-head small {
+            display: block;
+            color: #8a7777;
+            font-size: 10px;
+            margin-top: 3px;
+        }
+        .messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            min-height: 380px;
+            max-height: 520px;
+        }
+        .message {
+            display: flex;
+            margin-bottom: 15px;
+        }
+        .message.ai {
+            justify-content: flex-start;
+        }
+        .message.user {
+            justify-content: flex-end;
+        }
+        .bubble {
+            max-width: 78%;
+            padding: 13px 15px;
+            border-radius: 16px;
+            font-size: 12px;
+            line-height: 1.9;
+        }
+        .ai .bubble {
+            background: #fff3d5;
+            border: 1px solid #ead6a7;
+            color: #4d3930;
+            border-top-right-radius: 5px;
+        }
+        .user .bubble {
+            background: #991b1b;
+            color: white;
+            border-top-left-radius: 5px;
+        }
+        .hint-title {
+            color: #991b1b;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .quick-actions {
+            padding: 10px 20px 0;
+            display: flex;
+            gap: 7px;
+            flex-wrap: wrap;
+        }
+        .quick {
+            border: 1px solid #e6d6c1;
+            background: #fffaf1;
+            color: #684848;
+            padding: 8px 11px;
+            border-radius: 20px;
+            font-family: inherit;
+            font-size: 10px;
+            cursor: pointer;
+        }
+        .quick:hover {
+            background: #fff0c8;
+        }
+        .input-area {
+            border-top: 1px solid #eadfce;
+            padding: 13px;
+            display: flex;
+            gap: 8px;
+            background: #fffdf9;
+        }
+        .input-area input {
+            flex: 1;
+            border: 1px solid #dfcfbc;
+            border-radius: 13px;
+            padding: 12px;
+            font-family: inherit;
+            font-size: 12px;
+            outline: none;
+            direction: rtl;
+        }
+        .input-area input:focus {
+            border-color: #c98b26;
+        }
+        .send {
+            width: 48px;
+            border: none;
+            border-radius: 13px;
+            background: #991b1b;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        .send:hover {
+            background: #7f1d1d;
+        }
+        .hint-count {
+            text-align: center;
+            padding: 8px;
+            color: #8b7777;
+            font-size: 10px;
+        }
+        @media (max-width: 800px) {
+            .workspace {
+                grid-template-columns: 1fr;
+            }
+            .context {
+                order: 2;
+            }
+            .chat {
+                order: 1;
+            }
+        }
+        @media (max-width: 500px) {
+            main {
+                width: 95%;
+                margin-top: 18px;
+            }
+            .hero {
+                padding: 27px 20px;
+            }
+            .hero h2 {
+                font-size: 26px;
+            }
+            .bubble {
+                max-width: 88%;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="top-line"></div>
+<header>
+    <div class="brand">
+        <div class="logo">∫</div>
+        <div>
+            <h1>MathMind AI</h1>
+            <p>مساعد الرياضيات الذكي</p>
+        </div>
+    </div>
+    <button class="back" onclick="goBack()">
+        ← العودة
+    </button>
+</header>
+<main>
+    <section class="hero">
+        <h2>🧠 خلينا نفكّر مع بعض</h2>
+        <p>
+            اسألي عن السؤال أو الخطوة التي توقفتِ عندها.
+            سأساعدكِ بتلميحات وأسئلة موجهة حتى توصلي للحل بنفسكِ،
+            بدون إعطائكِ الإجابة النهائية مباشرة.
+        </p>
+        <div class="ai-status">
+            <span class="dot"></span>
+            مساعد التفكير الرياضي
+        </div>
+    </section>
+    <section class="workspace">
+        <aside class="panel context">
+            <h3>📐 سياق التدريب</h3>
+            <div class="context-box">
+                <span>الوحدة</span>
+                <strong id="unitName">لم يتم اختيار وحدة</strong>
+            </div>
+            <div class="context-box">
+                <span>الدرس</span>
+                <strong id="lessonName">يمكنكِ كتابة سؤالك مباشرة</strong>
+            </div>
+            <div class="context-box">
+                <span>السؤال</span>
+                <strong id="questionText">
+                    اسألي عن أي خطوة لم تفهميها.
+                </strong>
+            </div>
+            <div class="rules">
+                <h4>كيف أساعدكِ؟</h4>
+                <p>
+                    أشرح الفكرة، أسألكِ أسئلة موجهة،
+                    وأعطيكِ تلميحات تدريجية.
+                    لا أعطي الحل النهائي بدلًا منكِ.
+                </p>
+            </div>
+        </aside>
+        <section class="panel chat">
+            <div class="chat-head">
+                <div class="ai-icon">
+                    ∫
+                </div>
+                <div>
+                    <strong>MathMind AI</strong>
+                    <small>مساعدكِ في التفكير الرياضي</small>
+                </div>
+            </div>
+            <div class="messages" id="messages">
+                <div class="message ai">
+                    <div class="bubble">
+                        <div class="hint-title">
+                            أهلاً! 👋
+                        </div>
+                        أنا MathMind AI.
+                        اكتبي لي السؤال أو الخطوة التي توقفتِ عندها،
+                        وسأساعدكِ بتلميح بدل ما أعطيكِ الحل جاهزًا.
+                    </div>
+                </div>
+            </div>
+            <div class="quick-actions">
+                <button class="quick" onclick="quickAsk('أعطني تلميحًا')">
+                    💡 أعطني تلميحًا
+                </button>
+                <button class="quick" onclick="quickAsk('لا أفهم من أين أبدأ')">
+                    🤔 من أين أبدأ؟
+                </button>
+                <button class="quick" onclick="quickAsk('هل خطوتي صحيحة؟')">
+                    ✓ هل خطوتي صحيحة؟
+                </button>
+                <button class="quick" onclick="quickAsk('اشرح لي الفكرة')">
+                    📚 اشرح الفكرة
+                </button>
+            </div>
+            <div class="hint-count">
+                التلميحات تساعدكِ على التفكير — وليس على نسخ الإجابة.
+            </div>
+            <div class="input-area">
+                <input
+                    id="userInput"
+                    type="text"
+                    placeholder="اكتبي سؤالك هنا..."
+                    onkeydown="handleEnter(event)"
+                >
+                <button
+                    class="send"
+                    onclick="sendMessage()"
+                >
+                    ➤
+                </button>
+            </div>
+        </section>
+    </section>
+</main>
+<script>
+let hintNumber = 0;
+/*
+    محرك التلميحات المحلي.
+    هذه النسخة Prototype وليست API حقيقي.
+*/
+function generateHint(text) {
+    const t = text.toLowerCase();
+    if (
+        t.includes("تلميح") ||
+        t.includes("ابدأ") ||
+        t.includes("من أين")
+    ) {
+        hintNumber++;
+        if (hintNumber === 1) {
+            return `
+                <div class="hint-title">💡 التلميح الأول</div>
+                قبل أن تبدئي بالحساب، حددي أول قاعدة أو تعريف
+                يرتبط بنوع السؤال.
+                <br><br>
+                <strong>ما المعطيات الموجودة أمامكِ؟</strong>
+            `;
+        }
+        if (hintNumber === 2) {
+            return `
+                <div class="hint-title">💡 التلميح الثاني</div>
+                ممتاز. الآن ركزي على العلاقة بين المعطيات
+                والمطلوب.
+                <br><br>
+                ما القاعدة التي تربط بينهما؟
+            `;
+        }
+        return `
+            <div class="hint-title">💡 تلميح إضافي</div>
+            جربي كتابة القاعدة أولًا، ثم عوّضي المعطيات
+            خطوة خطوة.
+            <br><br>
+            لا تنتقلي للحساب قبل أن تتأكدي من اختيار القاعدة الصحيحة.
+        `;
+    }
+    if (
+        t.includes("صحيحة") ||
+        t.includes("خطوتي") ||
+        t.includes("صح")
+    ) {
+        return `
+            <div class="hint-title">🔎 خلينا نتحقق</div>
+            بدل ما أعطيكِ نعم أو لا مباشرة،
+            قارني خطوتكِ مع القاعدة المستخدمة:
+            <br><br>
+            <strong>
+            هل طبقتِ القاعدة على جميع الحدود؟
+            وهل الإشارات والحسابات متوافقة معها؟
+            </strong>
+        `;
+    }
+    if (
+        t.includes("فكرة") ||
+        t.includes("اشرح") ||
+        t.includes("شرح")
+    ) {
+        return `
+            <div class="hint-title">📚 نفكر بالفكرة</div>
+            أول شيء نحدد: ما المطلوب في السؤال؟
+            <br><br>
+            بعد ذلك نختار القاعدة المناسبة،
+            ثم نطبقها على المعطيات.
+            <br><br>
+            اكتبي لي <strong>المطلوب والمعطيات</strong>
+            وسأوجهكِ للخطوة التالية.
+        `;
+    }
+    if (
+        t.includes("مشتق") ||
+        t.includes("تفاضل")
+    ) {
+        return `
+            <div class="hint-title">💡 تلميح التفاضل</div>
+            قبل الاشتقاق، حددي نوع الاقتران.
+            <br><br>
+            هل تستطيعين تحديد القاعدة المناسبة
+            لكل حد من حدود الاقتران؟
+        `;
+    }
+    if (
+        t.includes("مثلث") ||
+        t.includes("sin") ||
+        t.includes("cos") ||
+        t.includes("tan")
+    ) {
+        return `
+            <div class="hint-title">💡 تلميح مثلثي</div>
+            ابدئي من المتطابقات الأساسية التي تعرفينها،
+            ثم حاولي تحويل أحد طرفي العلاقة إلى صورة
+            الطرف الآخر.
+            <br><br>
+            <strong>
+            أي متطابقة أساسية تحتوي على sin و cos
+            يمكن أن تساعدكِ هنا؟
+            </strong>
+        `;
+    }
+    if (
+        t.includes("مركب") ||
+        t.includes("complex") ||
+        t.includes("i")
+    ) {
+        return `
+            <div class="hint-title">💡 تلميح الأعداد المركبة</div>
+            افصلي العدد المركب إلى جزئه الحقيقي
+            وجزئه التخيلي أولًا.
+            <br><br>
+            ثم حددي العملية المطلوبة قبل أن تبدئي بالحساب.
+        `;
+    }
+    return `
+        <div class="hint-title">🧠 خلينا نفكر</div>
+        ممتاز أنكِ سألتِ.
+        <br><br>
+        بدل أن أعطيكِ الحل مباشرة، اكتبي لي:
+        <strong>ما المعطيات؟ وما المطلوب إيجاده؟</strong>
+        <br><br>
+        وبعدها سأعطيكِ تلميحًا مناسبًا للخطوة التالية.
+    `;
+}
+function addMessage(text, type) {
+    const messages = document.getElementById("messages");
+    const wrapper = document.createElement("div");
+    wrapper.className = "message " + type;
+    const bubble = document.createElement("div");
+    bubble.className = "bubble";
+    bubble.innerHTML = text;
+    wrapper.appendChild(bubble);
+    messages.appendChild(wrapper);
+    messages.scrollTop = messages.scrollHeight;
+}
+function sendMessage() {
+    const input = document.getElementById("userInput");
+    const text = input.value.trim();
+    if (!text) return;
+    addMessage(text, "user");
+    input.value = "";
+    setTimeout(() => {
+        addMessage(generateHint(text), "ai");
+    }, 350);
+}
+function quickAsk(text) {
+    addMessage(text, "user");
+    setTimeout(() => {
+        addMessage(generateHint(text), "ai");
+    }, 300);
+}
+function handleEnter(event) {
+    if (event.key === "Enter") {
+        sendMessage();
+    }
+}
+function goBack() {
+    window.history.back();
+}
+/*
+    محاولة قراءة السؤال الحالي من localStorage
+    إذا كانت البيانات موجودة.
+*/
+try {
+    const currentStudent =
+        JSON.parse(
+            localStorage.getItem("mathmind_current_student")
+        );
+    const currentQuestion =
+        JSON.parse(
+            localStorage.getItem("mathmind_ai_context")
+        );
+    if (currentQuestion) {
+        if (currentQuestion.unit) {
+            document.getElementById("unitName").textContent =
+                currentQuestion.unit;
+        }
+        if (currentQuestion.lesson) {
+            document.getElementById("lessonName").textContent =
+                currentQuestion.lesson;
+        }
+        if (currentQuestion.question) {
+            document.getElementById("questionText").textContent =
+                currentQuestion.question;
+        }
+    }
+} catch (error) {
+    console.log("AI context not available.");
+}
+</script>
+</body>
+</html>
